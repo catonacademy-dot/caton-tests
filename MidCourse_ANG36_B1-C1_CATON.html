@@ -90,7 +90,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <div class="header-title">Test de Mi-Parcours · Approfondissement B1→C1</div>
     </div>
     <div class="timer-wrap">
-      <div class="timer-display" id="timer">45:00</div>
+      <div class="timer-display" id="timer">60:00</div>
       <div class="timer-label">Temps restant</div>
       <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
     </div>
@@ -271,7 +271,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=2700,rem=2700,tInt;
+var cur=0,total=3600,rem=3600,tInt;
 function pad(n){return n<10?'0'+n:n;}
 function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
 startTimer();
@@ -343,10 +343,21 @@ function submitTest(){
     '--- §5 ORAL ---',
     'Lien : '+getVal('audio-link'),'Commentaire : '+getVal('comment'),
   ];
-  var body=encodeURIComponent(lines.join('\n'));
-  var subj=encodeURIComponent('Mi-Parcours Approfondissement B1→C1 — '+nom+' — '+getVal('id-date'));
-  window.location.href='mailto:Lenny@catonacademy.com?subject='+subj+'&body='+body;
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Ton client email vient de s\'ouvrir avec toutes tes réponses.</p></div>';
+  var subj='Mi-Parcours Approfondissement B1→C1 — '+nom+' — '+getVal('id-date');
+  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
+  fetch('https://formspree.io/f/mlgadonn',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({subject:subj,message:lines.join('\n')})
+  }).then(function(r){
+    if(r.ok){
+      document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>';
+    } else {
+      document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur d\'envoi</h2><p class="submit-sub">Merci de contacter Lenny@catonacademy.com directement.</p></div>';
+    }
+  }).catch(function(){
+    document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur d\'envoi</h2><p class="submit-sub">Merci de contacter Lenny@catonacademy.com directement.</p></div>';
+  });
 }
 </script>
 </body>

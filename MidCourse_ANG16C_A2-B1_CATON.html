@@ -90,7 +90,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <div class="header-title">Test de Mi-Parcours · Consolidation A2→B1</div>
     </div>
     <div class="timer-wrap">
-      <div class="timer-display" id="timer">25:00</div>
+      <div class="timer-display" id="timer">60:00</div>
       <div class="timer-label">Temps restant</div>
       <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
     </div>
@@ -116,7 +116,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <h1 class="hero-title">Test de Mi-Parcours<br>Consolidation A2→B1</h1>
     <p class="hero-sub">Complète toutes les sections puis soumets le formulaire.</p>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-val">25'</div><div class="hero-stat-lbl">Durée</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">60'</div><div class="hero-stat-lbl">Durée</div></div>
       <div class="hero-stat"><div class="hero-stat-val">50</div><div class="hero-stat-lbl">Points</div></div>
       <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-lbl">Sections</div></div>
     </div>
@@ -251,7 +251,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=1500,rem=1500,tInt;
+var cur=0,total=3600,rem=3600,tInt;
 function pad(n){return n<10?'0'+n:n;}
 function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
 startTimer();
@@ -379,10 +379,10 @@ function submitTest(){
     '--- §4 EXPRESSION ---',
     getVal('expr'),
   ];
-  var body=encodeURIComponent(lines.join('\n'));
-  var subj=encodeURIComponent('Mi-Parcours Consolidation A2→B1 — '+nom+' — '+getVal('id-date'));
-  window.location.href='mailto:Lenny@catonacademy.com?subject='+subj+'&body='+body;
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Ton client email vient de s\'ouvrir avec toutes tes réponses.<br>Vérifie que l\'email a bien été envoyé à ton formateur.</p></div>';
+  var subj=lines.join('\n';
+  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
+  }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
 }
 </script>
 </body>
