@@ -340,7 +340,7 @@ function submitTest(){
     '--- §5 ORAL ---',
     'Lien : '+getVal('audio-link'),'Commentaire : '+getVal('comment'),
   ];
-  var subj=lines.join('\n';
+  var subj=lines.join('\n');
   document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
   fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
   }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
