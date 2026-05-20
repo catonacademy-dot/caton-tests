@@ -81,29 +81,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 .submit-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:8px;}
 .submit-sub{font-size:14px;color:var(--muted);}
 
-/* ====== CATON CORRECTION ENGINE — CSS ====== */
+/* == CATON CORRECTION v7 == */
+.r-opt.ca-ok{background:#E6F4EC!important;border-color:#1F9254!important;color:#1F9254!important;font-weight:600!important;}
+.r-opt.ca-ko{background:#FDECEA!important;border-color:#C0392B!important;color:#C0392B!important;}
+.r-opt.ca-lock{pointer-events:none!important;cursor:default!important;}
+.inp-ok{border-color:#1F9254!important;background:#E6F4EC!important;color:#1F9254!important;font-weight:600;}
+.inp-ko{border-color:#C0392B!important;background:#FDECEA!important;}
+.inp-pend{border-color:#D08A00!important;background:#FFF8E1!important;}
+.fb{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:5px;margin-top:5px;width:fit-content;}
+.fb-ok{background:#E6F4EC;color:#1F9254;border:1px solid #1F9254;}
+.fb-ko{background:#FDECEA;color:#C0392B;border:1px solid #C0392B;}
+.fb-pend{background:#FFF8E1;color:#D08A00;border:1px solid #D08A00;}
 /* Score dans le header */
-.header-score{display:flex;flex-direction:column;align-items:center;gap:1px;}
-.hs-val{font-size:20px;font-weight:700;color:#D1AF5F;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
-.hs-lbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;}
-.hs-bar{width:60px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:4px;}
-.hs-fill{height:100%;background:#D1AF5F;border-radius:2px;transition:width .4s;}
-/* Feedback MCQ */
-.r-opt.ca-correct{background:#E8F8EE!important;border-color:#1F9254!important;color:#1F9254!important;font-weight:600!important;}
-.r-opt.ca-wrong{background:#FDECEA!important;border-color:#C0392B!important;color:#C0392B!important;}
-.r-opt.ca-locked{pointer-events:none!important;cursor:default!important;}
-.ca-badge{margin-left:auto;flex-shrink:0;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
-.ca-badge-ok{background:#1F9254;color:#fff;}
-.ca-badge-err{background:#C0392B;color:#fff;}
-/* Feedback inputs */
-.ca-inp-ok{border-color:#1F9254!important;background:#E8F8EE!important;color:#1F9254!important;font-weight:600;}
-.ca-inp-err{border-color:#C0392B!important;background:#FDECEA!important;}
-.ca-inp-pend{border-color:#D08A00!important;background:#FFF8E1!important;}
-/* Feedback row */
-.ca-fb{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;margin-top:5px;width:fit-content;}
-.ca-fb-ok{background:#E8F8EE;color:#1F9254;border:1px solid #1F9254;}
-.ca-fb-err{background:#FDECEA;color:#C0392B;border:1px solid #C0392B;}
-.ca-fb-pend{background:#FFF8E1;color:#D08A00;border:1px solid #D08A00;}
+.ca-score{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.ca-sval{font-size:19px;font-weight:700;color:#D1AF5F;font-variant-numeric:tabular-nums;}
+.ca-slbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.7px;}
+.ca-sbar{width:56px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:3px;}
+.ca-sfill{height:100%;background:#D1AF5F;border-radius:2px;transition:width .4s;}
 
 </style>
 </head>
@@ -370,219 +364,95 @@ function submitTest(){
   fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
   }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
 }
-</script>
-<script>
 
-/* ====== CATON CORRECTION ENGINE ====== */
+/* == CATON ENGINE v7 == */
 (function(){
-var ANS = {
-  "a1": "is",
-  "a2": "am",
-  "a3": "Are",
-  "a4": ["aren\'t", "are not"],
-  "a5": "Does",
-  "a6": "does",
-  "b1": ["have never visited", "\'ve never visited"],
-  "b2": "finished",
-  "b3": ["have already sent", "\'ve already sent"],
-  "v1": "knee",
-  "v2": "july",
-  "v3": "spring",
-  "v4": "seventy",
-  "v5": "wednesday",
-  "ir1": "went",
-  "ir2": "gone",
-  "ir3": "spoke",
-  "ir4": "spoken",
-  "ir5": "took",
-  "ir6": "taken",
-  "lk1": "so",
-  "lk2": "although",
-  "lk3": "because",
-  "lk4": "however",
-  "lk5": "despite",
-  "c1": "A — What\'s",
-  "c2": "B — drink",
-  "c3": "C — has lived",
-  "c4": "C — Have",
-  "c5": "A — because of",
-  "c6": "C — had studied",
-  "c7": "B — was approved",
-  "r1": "B — Saving time on commuting",
-  "r2": "C — Younger workers",
-  "r3": "B — Splitting time between home and office",
-  "r4": "B — It will become standard in many industries",
-  "r5": "C — Ensuring all employees feel included"
-};
-var pts = 0, maxPts = 0, answered = 0;
+var A={"a1":"is","a2":"am","a3":"Are","a4":["aren\'t","are not"],"a5":"Does","a6":"does","b1":["have never visited","\'ve never visited"],"b2":"finished","b3":["have already sent","\'ve already sent"],"v1":"knee","v2":"july","v3":"spring","v4":"seventy","v5":"wednesday","ir1":"went","ir2":"gone","ir3":"spoke","ir4":"spoken","ir5":"took","ir6":"taken","lk1":"so","lk2":"although","lk3":"because","lk4":"however","lk5":"despite","c1":"A — What\'s","c2":"B — drink","c3":"C — has lived","c4":"C — Have","c5":"A — because of","c6":"C — had studied","c7":"B — was approved","r1":"B — Saving time on commuting","r2":"C — Younger workers","r3":"B — Splitting time between home and office","r4":"B — It will become standard in many industries","r5":"C — Ensuring all employees feel included"};
+var pts=0,tot=0,done=0;
 
-/* --- Normalisation --- */
-function norm(s){
-  return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');
+function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
+function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
+
+/* Score */
+function mkScore(){
+  var hi=document.querySelector('.header-inner');if(!hi)return;
+  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
+  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
+  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
 }
-function isRight(id, val){
-  var a = ANS[id];
-  if(a === null || a === undefined) return null;
-  var v = norm(val);
-  if(Array.isArray(a)) return a.some(function(x){ return norm(x)===v; });
-  return norm(a) === v;
-}
-function expected(id){
-  var a = ANS[id];
-  if(!a) return '?';
-  return Array.isArray(a) ? a[0] : a;
+function upScore(){
+  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
+  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
+  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
 }
 
-/* --- Score widget dans le header --- */
-function insertScore(){
-  var hi = document.querySelector('.header-inner');
-  if(!hi) return;
-  var d = document.createElement('div');
-  d.className = 'header-score';
-  d.id = 'ca-score-box';
-  d.innerHTML = '<div class="hs-val" id="ca-val">0</div>'
-    + '<div class="hs-lbl">Score</div>'
-    + '<div class="hs-bar"><div class="hs-fill" id="ca-fill" style="width:0%"></div></div>';
-  var tw = hi.querySelector('.timer-wrap');
-  tw ? hi.insertBefore(d, tw) : hi.appendChild(d);
-}
-function updateScore(){
-  var el = document.getElementById('ca-val');
-  var bar = document.getElementById('ca-fill');
-  if(el) el.textContent = pts + (maxPts > 0 ? '/' + maxPts : '');
-  if(bar) bar.style.width = (maxPts > 0 ? Math.min(100, Math.round(pts/maxPts*100)) : 0) + '%';
-}
+/* Feedback */
+function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
+function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
 
-/* --- Feedback helpers --- */
-function removeFb(el){
-  var n = el.nextSibling;
-  while(n && n.nodeType===1 && n.classList && n.classList.contains('ca-fb')){
-    var t = n.nextSibling; n.parentNode.removeChild(n); n = t;
-  }
-}
-function addFb(el, type, msg){
-  removeFb(el);
-  var d = document.createElement('div');
-  d.className = 'ca-fb ca-fb-' + type;
-  d.innerHTML = msg;
-  el.parentNode.insertBefore(d, el.nextSibling);
-}
-
-/* --- MCQ radios --- */
-function initRadios(){
+/* MCQ */
+function bindRadios(){
   document.querySelectorAll('.radio-list').forEach(function(list){
-    var inp0 = list.querySelector('input[type="radio"]');
-    if(!inp0) return;
-    var name = inp0.name;
-    if(!ANS.hasOwnProperty(name)) return;
-    var ans = ANS[name];
-    if(ans !== null){ maxPts++; updateScore(); }
-
+    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
+    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
+    var ans=A[nm];if(ans!==null){tot++;upScore();}
     list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change', function(){
-        if(list.dataset.cadone) return;
-        list.dataset.cadone = '1';
-        var chosen = list.querySelector('input:checked');
-        if(!chosen) return;
-        var right = isRight(name, chosen.value);
-
+      inp.addEventListener('change',function(){
+        if(list.dataset.done)return;list.dataset.done='1';
+        var ch=list.querySelector('input:checked');if(!ch)return;
+        var right=ok(nm,ch.value);
         list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-locked');
-          var oi = opt.querySelector('input');
-          if(!oi) return;
-          var isCorr = Array.isArray(ans)
-            ? ans.some(function(a){ return norm(a)===norm(oi.value); })
-            : ans && norm(oi.value)===norm(ans);
-          var badge = document.createElement('span');
-          badge.className = 'ca-badge';
-          if(isCorr){
-            opt.classList.add('ca-correct');
-            badge.classList.add('ca-badge-ok');
-            badge.textContent = '✓';
-            opt.appendChild(badge);
-          } else if(oi.checked && !right){
-            opt.classList.add('ca-wrong');
-            badge.classList.add('ca-badge-err');
-            badge.textContent = '✕';
-            opt.appendChild(badge);
-          }
+          opt.classList.add('ca-lock');
+          var oi=opt.querySelector('input');if(!oi)return;
+          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
+          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
+          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
+          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
         });
-
-        if(ans !== null){
-          if(right === true) pts++;
-          answered++;
-          updateScore();
-        }
+        if(ans!==null){if(right===true){pts++;}done++;upScore();}
       });
     });
   });
 }
 
-/* --- Text inputs --- */
-function evalInput(inp){
-  var id = inp.id;
-  if(!id || id==='id-nom' || id==='id-date' || !ANS.hasOwnProperty(id)) return;
-  if(inp.dataset.cadone) return;
-  var v = inp.value.trim();
-  if(!v) return;
-  inp.dataset.cadone = '1';
-  var ans = ANS[id];
-
-  if(ans === null){
-    inp.classList.add('ca-inp-pend');
-    addFb(inp, 'pend', '🟠 À corriger par le formateur');
-    return;
-  }
-
-  answered++;
-  var right = isRight(id, v);
-  inp.classList.remove('ca-inp-ok','ca-inp-err');
-  if(right){
-    inp.classList.add('ca-inp-ok');
-    addFb(inp, 'ok', '✅ Correct !');
-    pts++;
-  } else {
-    inp.classList.add('ca-inp-err');
-    addFb(inp, 'err', '❌ Réponse attendue : <strong>' + expected(id) + '</strong>');
-  }
-  updateScore();
+/* Inputs */
+function chkInp(inp){
+  var id=inp.id;
+  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
+  if(inp.dataset.done)return;
+  var v=inp.value.trim();if(!v)return;
+  inp.dataset.done='1';
+  var ans=A[id];
+  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
+  done++;var r=ok(id,v);
+  inp.classList.remove('inp-ok','inp-ko');
+  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
+  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
+  upScore();
 }
-
-function initInputs(){
-  document.querySelectorAll('input.n-input, input.inline-fill').forEach(function(inp){
-    var id = inp.id;
-    if(!id || id==='id-nom' || id==='id-date' || !ANS.hasOwnProperty(id)) return;
-    if(ANS[id] !== null){ maxPts++; }
-    inp.addEventListener('blur', function(){ evalInput(inp); });
-    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+function bindInputs(){
+  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
+    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
+    if(A[inp.id]!==null){tot++;}
+    inp.addEventListener('blur',function(){chkInp(inp);});
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
   });
-  updateScore();
+  upScore();
 }
 
-/* --- Textareas libres --- */
-function initTextareas(){
+/* Textareas */
+function bindTa(){
   document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur', function(){
-      if(!ta.value.trim() || ta.dataset.cadone) return;
-      ta.dataset.cadone = '1';
-      ta.style.borderColor = '#D08A00';
-      ta.style.background = '#FFF8E1';
-      addFb(ta, 'pend', '🟠 Production libre — À corriger par le formateur');
+    ta.addEventListener('blur',function(){
+      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
+      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
+      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
     });
   });
 }
 
-/* --- Init au chargement --- */
-document.addEventListener('DOMContentLoaded', function(){
-  insertScore();
-  // Attendre que les MCQ dynamiques soient rendus (JS original les génère au DOMContentLoaded aussi)
-  setTimeout(function(){
-    initRadios();
-    initInputs();
-    initTextareas();
-  }, 300);
-});
-
+mkScore();bindRadios();bindInputs();bindTa();
 })();
 
 </script>
