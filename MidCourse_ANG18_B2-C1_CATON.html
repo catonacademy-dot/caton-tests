@@ -77,6 +77,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 .submit-screen{text-align:center;padding:60px 20px;}
 .submit-title{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--navy);margin-bottom:8px;}
 .submit-sub{font-size:14px;color:var(--muted);}
+
+/* ====== CATON CORRECTION ENGINE — CSS ====== */
+/* Score dans le header */
+.header-score{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.hs-val{font-size:20px;font-weight:700;color:#D1AF5F;font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;}
+.hs-lbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;}
+.hs-bar{width:60px;height:3px;background:rgba(255,255,255,.12);border-radius:2px;margin-top:4px;}
+.hs-fill{height:100%;background:#D1AF5F;border-radius:2px;transition:width .4s;}
+/* Feedback MCQ */
+.r-opt.ca-correct{background:#E8F8EE!important;border-color:#1F9254!important;color:#1F9254!important;font-weight:600!important;}
+.r-opt.ca-wrong{background:#FDECEA!important;border-color:#C0392B!important;color:#C0392B!important;}
+.r-opt.ca-locked{pointer-events:none!important;cursor:default!important;}
+.ca-badge{margin-left:auto;flex-shrink:0;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.ca-badge-ok{background:#1F9254;color:#fff;}
+.ca-badge-err{background:#C0392B;color:#fff;}
+/* Feedback inputs */
+.ca-inp-ok{border-color:#1F9254!important;background:#E8F8EE!important;color:#1F9254!important;font-weight:600;}
+.ca-inp-err{border-color:#C0392B!important;background:#FDECEA!important;}
+.ca-inp-pend{border-color:#D08A00!important;background:#FFF8E1!important;}
+/* Feedback row */
+.ca-fb{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;margin-top:5px;width:fit-content;}
+.ca-fb-ok{background:#E8F8EE;color:#1F9254;border:1px solid #1F9254;}
+.ca-fb-err{background:#FDECEA;color:#C0392B;border:1px solid #C0392B;}
+.ca-fb-pend{background:#FFF8E1;color:#D08A00;border:1px solid #D08A00;}
+
 </style>
 </head>
 <body>
@@ -367,6 +392,217 @@ function submitTest(){
   fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
   }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
 }
+</script>
+<script>
+
+/* ====== CATON CORRECTION ENGINE ====== */
+(function(){
+var ANS = {
+  "g1": "higher",
+  "g1b": "greater",
+  "g2": "the most ambitious",
+  "g3": ["considerably more", "more considerably"],
+  "m1": null,
+  "m2": null,
+  "m3": null,
+  "ir1": "bent",
+  "ir2": "bent",
+  "ir3": "swept",
+  "ir4": "swept",
+  "ir5": "sought",
+  "ir6": "sought",
+  "wd1": "convincing",
+  "wd2": "reliable",
+  "wd3": "breadth",
+  "wd4": "accessibility",
+  "wd5": "persistence",
+  "lk1": ["because of", "due to", "owing to"],
+  "lk2": ["despite", "in spite of", "notwithstanding"],
+  "lk3": ["nevertheless", "however", "nonetheless"],
+  "lk4": ["provided", "provided that", "as long as", "once"],
+  "lk5": ["whereas", "while", "whilst"],
+  "c1": "A — which",
+  "c2": "A — Although",
+  "c3": "B — provided that",
+  "c4": "B — sign",
+  "c5": "A — so",
+  "r1": "B — It is a myth that harms performance",
+  "r2": "C — 23 minutes",
+  "r3": "B — The time lost each time the brain changes tasks",
+  "r4": "C — They perform worst on cognitive flexibility tests",
+  "r5": "C — Redesign workflows to protect concentration"
+};
+var pts = 0, maxPts = 0, answered = 0;
+
+/* --- Normalisation --- */
+function norm(s){
+  return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');
+}
+function isRight(id, val){
+  var a = ANS[id];
+  if(a === null || a === undefined) return null;
+  var v = norm(val);
+  if(Array.isArray(a)) return a.some(function(x){ return norm(x)===v; });
+  return norm(a) === v;
+}
+function expected(id){
+  var a = ANS[id];
+  if(!a) return '?';
+  return Array.isArray(a) ? a[0] : a;
+}
+
+/* --- Score widget dans le header --- */
+function insertScore(){
+  var hi = document.querySelector('.header-inner');
+  if(!hi) return;
+  var d = document.createElement('div');
+  d.className = 'header-score';
+  d.id = 'ca-score-box';
+  d.innerHTML = '<div class="hs-val" id="ca-val">0</div>'
+    + '<div class="hs-lbl">Score</div>'
+    + '<div class="hs-bar"><div class="hs-fill" id="ca-fill" style="width:0%"></div></div>';
+  var tw = hi.querySelector('.timer-wrap');
+  tw ? hi.insertBefore(d, tw) : hi.appendChild(d);
+}
+function updateScore(){
+  var el = document.getElementById('ca-val');
+  var bar = document.getElementById('ca-fill');
+  if(el) el.textContent = pts + (maxPts > 0 ? '/' + maxPts : '');
+  if(bar) bar.style.width = (maxPts > 0 ? Math.min(100, Math.round(pts/maxPts*100)) : 0) + '%';
+}
+
+/* --- Feedback helpers --- */
+function removeFb(el){
+  var n = el.nextSibling;
+  while(n && n.nodeType===1 && n.classList && n.classList.contains('ca-fb')){
+    var t = n.nextSibling; n.parentNode.removeChild(n); n = t;
+  }
+}
+function addFb(el, type, msg){
+  removeFb(el);
+  var d = document.createElement('div');
+  d.className = 'ca-fb ca-fb-' + type;
+  d.innerHTML = msg;
+  el.parentNode.insertBefore(d, el.nextSibling);
+}
+
+/* --- MCQ radios --- */
+function initRadios(){
+  document.querySelectorAll('.radio-list').forEach(function(list){
+    var inp0 = list.querySelector('input[type="radio"]');
+    if(!inp0) return;
+    var name = inp0.name;
+    if(!ANS.hasOwnProperty(name)) return;
+    var ans = ANS[name];
+    if(ans !== null){ maxPts++; updateScore(); }
+
+    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        if(list.dataset.cadone) return;
+        list.dataset.cadone = '1';
+        var chosen = list.querySelector('input:checked');
+        if(!chosen) return;
+        var right = isRight(name, chosen.value);
+
+        list.querySelectorAll('.r-opt').forEach(function(opt){
+          opt.classList.add('ca-locked');
+          var oi = opt.querySelector('input');
+          if(!oi) return;
+          var isCorr = Array.isArray(ans)
+            ? ans.some(function(a){ return norm(a)===norm(oi.value); })
+            : ans && norm(oi.value)===norm(ans);
+          var badge = document.createElement('span');
+          badge.className = 'ca-badge';
+          if(isCorr){
+            opt.classList.add('ca-correct');
+            badge.classList.add('ca-badge-ok');
+            badge.textContent = '✓';
+            opt.appendChild(badge);
+          } else if(oi.checked && !right){
+            opt.classList.add('ca-wrong');
+            badge.classList.add('ca-badge-err');
+            badge.textContent = '✕';
+            opt.appendChild(badge);
+          }
+        });
+
+        if(ans !== null){
+          if(right === true) pts++;
+          answered++;
+          updateScore();
+        }
+      });
+    });
+  });
+}
+
+/* --- Text inputs --- */
+function evalInput(inp){
+  var id = inp.id;
+  if(!id || id==='id-nom' || id==='id-date' || !ANS.hasOwnProperty(id)) return;
+  if(inp.dataset.cadone) return;
+  var v = inp.value.trim();
+  if(!v) return;
+  inp.dataset.cadone = '1';
+  var ans = ANS[id];
+
+  if(ans === null){
+    inp.classList.add('ca-inp-pend');
+    addFb(inp, 'pend', '🟠 À corriger par le formateur');
+    return;
+  }
+
+  answered++;
+  var right = isRight(id, v);
+  inp.classList.remove('ca-inp-ok','ca-inp-err');
+  if(right){
+    inp.classList.add('ca-inp-ok');
+    addFb(inp, 'ok', '✅ Correct !');
+    pts++;
+  } else {
+    inp.classList.add('ca-inp-err');
+    addFb(inp, 'err', '❌ Réponse attendue : <strong>' + expected(id) + '</strong>');
+  }
+  updateScore();
+}
+
+function initInputs(){
+  document.querySelectorAll('input.n-input, input.inline-fill').forEach(function(inp){
+    var id = inp.id;
+    if(!id || id==='id-nom' || id==='id-date' || !ANS.hasOwnProperty(id)) return;
+    if(ANS[id] !== null){ maxPts++; }
+    inp.addEventListener('blur', function(){ evalInput(inp); });
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); inp.blur(); } });
+  });
+  updateScore();
+}
+
+/* --- Textareas libres --- */
+function initTextareas(){
+  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
+    ta.addEventListener('blur', function(){
+      if(!ta.value.trim() || ta.dataset.cadone) return;
+      ta.dataset.cadone = '1';
+      ta.style.borderColor = '#D08A00';
+      ta.style.background = '#FFF8E1';
+      addFb(ta, 'pend', '🟠 Production libre — À corriger par le formateur');
+    });
+  });
+}
+
+/* --- Init au chargement --- */
+document.addEventListener('DOMContentLoaded', function(){
+  insertScore();
+  // Attendre que les MCQ dynamiques soient rendus (JS original les génère au DOMContentLoaded aussi)
+  setTimeout(function(){
+    initRadios();
+    initInputs();
+    initTextareas();
+  }, 300);
+});
+
+})();
+
 </script>
 </body>
 </html>
