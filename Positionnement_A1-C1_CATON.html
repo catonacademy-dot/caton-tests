@@ -70,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 .btn-submit{background:var(--gold);color:var(--navy);font-weight:700;padding:12px 32px;border-radius:20px;border:none;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;}
 .callout{background:#EAF4FF;border:1px solid #B8D9F5;border-radius:8px;padding:12px 16px;font-size:13px;color:#1A5FA8;margin-bottom:14px;}
 .callout-warn{background:var(--gold-pale);border-color:var(--gold);color:#7A5C00;}
-.progress-badge{background:rgba(209,175,95,.15);border:1px solid var(--gold);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--gold-light);margin-bottom:20px;text-align:center;}
+.progress-badge{background:var(--navy);border:1px solid var(--gold);border-radius:8px;padding:10px 16px;font-size:13px;color:#ffffff;margin-bottom:20px;text-align:center;font-weight:500;}
 .level-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:middle;}
 .lv-a1{background:#E6F4EC;color:#1F7A44;}
 .lv-a2{background:#E8F0FB;color:#1A5FA8;}
@@ -168,7 +168,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <p class="hero-sub">Réponds aussi loin que tu peux — laisse les questions difficiles sans réponse, c'est normal.</p>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-val">15'</div><div class="hero-stat-lbl">Durée</div></div>
-      <div class="hero-stat"><div class="hero-stat-val">40</div><div class="hero-stat-lbl">Points max</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">32</div><div class="hero-stat-lbl">Points max</div></div>
       <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-lbl">Sections</div></div>
     </div>
   </div>
@@ -187,8 +187,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
         <option>Progresser pour le travail / communication professionnelle</option>
         <option>Voyage et communication quotidienne</option>
         <option>Passer une certification (CLOE, TOEIC, etc.)</option>
-        <option>Obtenir un financement CPF</option>
         <option>Améliorer ma fluidité à l'oral</option>
+        <option>Préparer un entretien ou une présentation en anglais</option>
         <option>Autre</option>
       </select>
     </div>
@@ -252,7 +252,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <p class="instruction">Traduis en anglais.</p>
       <div class="grid2">
         <div class="q-block"><div class="q-num">1 — le travail</div><input class="n-input" id="va1" placeholder="…"></div>
-        <div class="q-block"><div class="q-num">2 — la maison</div><input class="n-input" id="va2" placeholder="…"></div>
+        <div class="q-block"><div class="q-num">2 — une maison</div><input class="n-input" id="va2" placeholder="…"></div>
         <div class="q-block"><div class="q-num">3 — le médecin</div><input class="n-input" id="va3" placeholder="…"></div>
         <div class="q-block"><div class="q-num">4 — acheter</div><input class="n-input" id="va4" placeholder="…"></div>
       </div>
@@ -332,7 +332,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <textarea class="n-ta" id="ex2" rows="3" placeholder="I want to improve my English because …"></textarea>
     </div>
     <div class="q-block" style="margin-top:10px">
-      <div class="q-num">3 — (Niveau B2–C1) Describe a challenge you have faced at work or in your personal life and how you dealt with it.</div>
+      <div class="q-num">3 — Describe a challenge you have faced recently and explain how you handled it.</div>
       <textarea class="n-ta" id="ex3" rows="3" placeholder="One challenge I faced was … I dealt with it by …"></textarea>
     </div>
 
@@ -362,18 +362,18 @@ function goSec(n){
 var qcm1a=[
   {id:'g1',q:'She _______ to work every day by bus.',opts:['A — go','B — goes','C — going','D — gone']},
   {id:'g2',q:'I _______ TV when you called me.',opts:['A — watch','B — watched','C — was watching','D — am watching']},
-  {id:'g3',q:'Have you ever _______ to London?',opts:['A — go','B — went','C — gone','D — going']},
+  {id:'g3',q:'_______ a supermarket near my house.',opts:['A — There are','B — It is','C — There is','D — Is there']},
   {id:'g4',q:'There _______ a lot of people at the meeting yesterday.',opts:['A — is','B — are','C — was','D — were']},
 ];
 var qcm1b=[
   {id:'g5',q:'If I _______ more time, I would travel more.',opts:['A — have','B — had','C — would have','D — will have']},
-  {id:'g6',q:'She asked me _______ I was coming to the party.',opts:['A — if','B — that','C — what','D — which']},
-  {id:'g7',q:'The report _______ by the team before the deadline.',opts:['A — finished','B — has finished','C — was finished','D — had been finished']},
+  {id:'g6',q:'She _______ in this company for ten years and she loves it.',opts:['A — works','B — worked','C — has worked','D — is working']},
+  {id:'g7',q:'By the time the manager arrived, the report _______ already _______ by the team.',opts:['A — was / finished','B — is / finished','C — has / finished','D — had been / finished']},
   {id:'g8',q:'I wish I _______ harder at school.',opts:['A — study','B — studied','C — had studied','D — would study']},
 ];
 var qcm1c=[
   {id:'g9',q:'Not only _______ the project on time, but they also exceeded expectations.',opts:['A — they delivered','B — did they deliver','C — they did deliver','D — delivered they']},
-  {id:'g10',q:'The extent _______ remote work has changed corporate culture is still debated.',opts:['A — that','B — in which','C — which','D — of which']},
+  {id:'g10',q:'The extent _______ remote work has changed corporate culture is still debated.',opts:['A — that','B — in which','C — to which','D — of which']},
   {id:'g11',q:'_______ more funding been available, the research could have been completed.',opts:['A — If','B — Should','C — Had','D — Were']},
   {id:'g12',q:'She was reluctant to commit, _______ she eventually agreed to lead the project.',opts:['A — yet','B — so','C — because','D — unless']},
 ];
@@ -428,16 +428,16 @@ function getVal(id){var el=document.getElementById(id);return el?el.value.trim()
 
 /* === CALCUL DE NIVEAU === */
 var CORRECT_ANSWERS={
-  g1:'B — goes',g2:'C — was watching',g3:'C — gone',g4:'D — were',
-  g5:'B — had',g6:'A — if',g7:'D — had been finished',g8:'C — had studied',
-  g9:'B — did they deliver',g10:'D — of which',g11:'C — Had',g12:'A — yet',
+  g1:'B — goes',g2:'C — was watching',g3:'C — There is',g4:'D — were',
+  g5:'B — had',g6:'C — has worked',g7:'D — had been / finished',g8:'C — had studied',
+  g9:'B — did they deliver',g10:'C — to which',g11:'C — Had',g12:'A — yet',
   ra1:"B — Nine o'clock",ra2:'C — The commute',ra3:'C — On Fridays',ra4:'B — Move closer to the office',
   rb1:'C — It may weaken corporate culture',rb2:'B — Practical and realistic',rb3:'C — Clear communication and accountability must be established',rb4:'B — Suppress / hinder'
 };
 var VOCAB_ANSWERS={
-  va1:['work','job'],va2:['house','home'],va3:['doctor','physician'],va4:['buy','purchase'],
-  vb1:['meeting','a meeting'],vb2:['complaint','claim','a complaint','a claim'],vb3:['improve','to improve'],vb4:['human resources','hr'],
-  vc1:['gap','shortcoming','a gap'],vc2:['nuance','a nuance'],vc3:['unavoidable','essential','key','must-have'],vc4:['outdated','obsolete','old-fashioned']
+  va1:['work','job'],va2:['a house','house'],va3:['doctor','a doctor','physician','a physician'],va4:['buy','to buy','purchase','to purchase'],
+  vb1:['meeting','a meeting'],vb2:['complaint','a complaint'],vb3:['improve','to improve','enhance','to enhance'],vb4:['human resources','the human resources','hr','the hr','human resource','the human resource'],
+  vc1:['gap','shortcoming','a gap','weakness','a weakness','deficiency','a deficiency'],vc2:['nuance','a nuance'],vc3:['essential','key','unmissable','must-have','a must'],vc4:['outdated','obsolete','old-fashioned']
 };
 function normV(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
 
@@ -495,16 +495,26 @@ function calcScores(){
     formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
     levelDesc='Tu t\'exprimes avec aisance sur la plupart des sujets. Quelques lacunes subsistent sur les structures avancées.';
     advice='Maîtriser le passif, les subordonnées complexes et développer le vocabulaire académique/professionnel.';
-  } else if(scoreC1<=3){
-    level='C1'; levelName='Avancé'; levelColor='#5B1FA8';
-    formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
-    levelDesc='Excellent niveau ! Tu maîtrises les structures complexes et le vocabulaire avancé. L\'objectif est de parfaire la fluidité et la précision.';
-    advice='Affiner les nuances idiomatiques, l\'inversion et la maîtrise stylistique.';
-  } else {
+  } else if(scoreB1B2>=6 && scoreC1>=6){
     level='C1+'; levelName='Très Avancé / C2'; levelColor='#2D0A4E';
     formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
     levelDesc='Niveau exceptionnel. Tu maîtrises l\'anglais à un niveau quasi-natif. Un programme sur-mesure est recommandé.';
     advice='Programme personnalisé axé sur l\'expression orale avancée et la certification.';
+  } else if(scoreB1B2>=6 && scoreC1>=2 && scoreC1<6){
+    level='C1'; levelName='Avancé'; levelColor='#5B1FA8';
+    formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
+    levelDesc='Excellent niveau ! Tu maîtrises les structures complexes et le vocabulaire avancé. L\'objectif est de parfaire la fluidité et la précision.';
+    advice='Affiner les nuances idiomatiques, l\'inversion et la maîtrise stylistique.';
+  } else if(scoreB1B2>=6 && scoreC1<2){
+    level='B2+'; levelName='Intermédiaire Avancé confirmé'; levelColor='#5A2D00';
+    formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
+    levelDesc='Très bon niveau B2. Tu maîtrises les structures intermédiaires mais les constructions C1 restent à consolider.';
+    advice='Travailler l\'inversion, les relatifs complexes et le vocabulaire académique avancé.';
+  } else {
+    level='B2+'; levelName='Intermédiaire Avancé confirmé'; levelColor='#5A2D00';
+    formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
+    levelDesc='Très bon niveau B2. Tu maîtrises les structures intermédiaires mais les constructions C1 restent à consolider.';
+    advice='Travailler l\'inversion, les relatifs complexes et le vocabulaire académique avancé.';
   }
 
   return {level:level,levelName:levelName,levelColor:levelColor,levelDesc:levelDesc,
@@ -577,12 +587,12 @@ function submitTest(){
     '--- §1 GRAMMAIRE A1–A2 ('+r.gramA1A2+'/4) ---',
     'G1 (présent) : '+getRadio('g1'),
     'G2 (past continuous) : '+getRadio('g2'),
-    'G3 (present perfect) : '+getRadio('g3'),
+    'G3 (there is/are) : '+getRadio('g3'),
     'G4 (there was/were) : '+getRadio('g4'),
     '',
     '--- §1 GRAMMAIRE B1–B2 ('+r.gramB1B2+'/4) ---',
     'G5 (conditionnel) : '+getRadio('g5'),
-    'G6 (indirect speech) : '+getRadio('g6'),
+    'G6 (present perfect durée) : '+getRadio('g6'),
     'G7 (passif) : '+getRadio('g7'),
     'G8 (wish) : '+getRadio('g8'),
     '',
@@ -594,7 +604,7 @@ function submitTest(){
     '',
     '--- §2 VOCABULAIRE A1–A2 ('+r.vocA1A2+'/4) ---',
     'le travail : '+getVal('va1'),
-    'la maison : '+getVal('va2'),
+    'une maison : '+getVal('va2'),
     'le médecin : '+getVal('va3'),
     'acheter : '+getVal('va4'),
     '',
@@ -664,9 +674,9 @@ function submitTest(){
 /* === CATON ENGINE — correction instantanée === */
 (function(){
 var A={
-  g1:'B — goes',g2:'C — was watching',g3:'C — gone',g4:'D — were',
-  g5:'B — had',g6:'A — if',g7:'D — had been finished',g8:'C — had studied',
-  g9:'B — did they deliver',g10:'D — of which',g11:'C — Had',g12:'A — yet',
+  g1:'B — goes',g2:'C — was watching',g3:'C — There is',g4:'D — were',
+  g5:'B — had',g6:'C — has worked',g7:'D — had been / finished',g8:'C — had studied',
+  g9:'B — did they deliver',g10:'C — to which',g11:'C — Had',g12:'A — yet',
   ra1:"B — Nine o'clock",ra2:'C — The commute',ra3:'C — On Fridays',ra4:'B — Move closer to the office',
   rb1:"C — It may weaken corporate culture",rb2:'B — Practical and realistic',rb3:'C — Clear communication and accountability must be established',rb4:'B — Suppress / hinder',
   va1:null,va2:null,va3:null,va4:null,
@@ -676,19 +686,22 @@ var A={
 };
 /* Réponses vocab acceptées */
 var vocab={
-  va1:['work','job'],va2:['house','home'],va3:['doctor','physician'],va4:['buy','purchase'],
-  vb1:['meeting','a meeting'],vb2:['complaint','claim','a complaint','a claim'],vb3:['improve','to improve'],vb4:['human resources','hr'],
-  vc1:['gap','shortcoming','a gap'],vc2:['nuance','a nuance'],vc3:['unavoidable','essential','key','must-have'],vc4:['outdated','obsolete','old-fashioned']
+  va1:['work','job'],va2:['a house','house'],va3:['doctor','a doctor','physician','a physician'],va4:['buy','to buy','purchase','to purchase'],
+  vb1:['meeting','a meeting'],vb2:['complaint','a complaint'],vb3:['improve','to improve','enhance','to enhance'],vb4:['human resources','the human resources','hr','the hr','human resource','the human resource'],
+  vc1:['gap','shortcoming','a gap','weakness','a weakness','deficiency','a deficiency'],vc2:['nuance','a nuance'],vc3:['essential','key','unmissable','must-have','a must'],vc4:['outdated','obsolete','old-fashioned']
 };
 var pts=0,tot=0;
 
 function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
 function ok(id,v){
-  var a=A[id];if(a===null){return null;}
   if(vocab[id]){var n=norm(v);return vocab[id].some(function(x){return norm(x)===n;});}
+  var a=A[id];if(a===null){return null;}
   return norm(a)===norm(v);
 }
-function exp(id){var a=A[id];if(!a)return'?';return a;}
+function exp(id){
+  if(vocab[id]){return vocab[id][0];}
+  var a=A[id];if(!a)return'?';return a;
+}
 
 function mkScore(){
   var hi=document.querySelector('.header-inner');if(!hi)return;
