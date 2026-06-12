@@ -873,6 +873,27 @@
   /* ═══════════════════════════════════════════════════
      AFFICHER LES RÉSULTATS
   ═══════════════════════════════════════════════════ */
+  var sectionHints={qcm:'Revois les 8 directions : East = soleil se lève, West = se couche. Astuce : Never Eat Shredded Wheat.',vf:'Attention : Northwest = North + West (pas East). Vérifie chaque direction intermédiaire.',blancs:'Les blancs testent les directions en contexte. Mémorise les abréviations : N, S, E, W, NE, NW, SE, SW.',paires:'Associe chaque direction à sa définition. Focus sur les intermédiaires (halfway between...).',excellent:'Excellent ! Ready for Section 07 — Directions.',ref:'→ Relis la <strong>Section 06 du Manuel Basique</strong> : tableau des 8 points cardinaux et astuce mnémotechnique.'};
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
   function showResults(name) {
     var qcmOk = Object.values(state.qcm).filter(Boolean).length;
     var vfOk  = Object.values(state.vf).filter(Boolean).length;
@@ -885,7 +906,7 @@
     var pairsOk  = state.pairs;
     var totalPts = qcmOk + vfOk + blanksOk + pairsOk;
     var maxPts   = 5 + 6 + 6 + 8;
-    var pct      = Math.round((totalPts / maxPts) * 100);
+    var pct      = Math.round((totalPts / maxPts) * 100);fetch('https://formspree.io/f/mbdezeqo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:name,section:'Section 06 — Cardinal Points | Exercices CATON Academy',score:pct+'%',qcm:qcmOk+'/5',vf:vfOk+'/6',blancs:blanksOk+'/6',paires:pairsOk+'/8'})}).catch(function(){});
 
     document.getElementById('resultStudentName').textContent = name;
     document.getElementById('finalScore').textContent = pct + '%';
@@ -896,12 +917,7 @@
     setCircle('circleEx4', pairsOk,  8);
     var c5 = document.getElementById('circleEx5');
     c5.textContent = '\u2014'; c5.className = 'ex-score-circle grey';
-
-    var msg;
-    if (pct >= 85)      msg = 'Excellent ! Tu maîtrises les points cardinaux. Ready for Section 07 \u2014 Directions !';
-    else if (pct >= 65) msg = 'Bon travail ! Revois les directions intermédiaires (NE, NW, SE, SW) et le soleil (East/West).';
-    else                msg = 'Continue à t\'entraîner ! Relis le tableau et utilise l\'astuce Never Eat Shredded Wheat.';
-    document.getElementById('finalMessage').textContent = msg;
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
 
     buildCorrections(qcmOk, vfOk, blanksOk, pairsOk);
 

@@ -1157,10 +1157,10 @@
 </div>
 
 <script>
-  /* ═══════════════════════════════════════════════
-     DONNÉES POUR CORRECTIONS
-  ═══════════════════════════════════════════════ */
-  const qcmQuestions = {
+  /* ═══════════════════════════════════════════════════
+     DONNÉES — SECTION 01  The English Alphabet
+  ═══════════════════════════════════════════════════ */
+  var qcmQuestions = {
     q1: 'Comment se prononce la lettre <strong>G</strong> en anglais ?',
     q2: 'Comment se prononce la lettre <strong>W</strong> en anglais ?',
     q3: 'La lettre <strong>H</strong> se prononce :',
@@ -1168,7 +1168,7 @@
     q5: 'La lettre <strong>Z</strong> se prononce :'
   };
 
-  const vfQuestions = {
+  var vfQuestions = {
     vf1: 'La lettre <strong>E</strong> se prononce <em>"ee"</em> en anglais.',
     vf2: 'La lettre <strong>Q</strong> se prononce <em>"kyu"</em>.',
     vf3: "L'alphabet anglais comporte <strong>25 lettres</strong>.",
@@ -1176,59 +1176,64 @@
     vf5: 'La lettre <strong>I</strong> se prononce comme le mot français <em>"il"</em>.',
     vf6: 'Le mot <strong>"Lemon"</strong> commence par la lettre L.'
   };
-  const vfCorrectMap = { vf1:'true', vf2:'true', vf3:'false', vf4:'true', vf5:'false', vf6:'true' };
+  var vfCorrectMap = { vf1:'true', vf2:'true', vf3:'false', vf4:'true', vf5:'false', vf6:'true' };
 
-  const blankData = {
-    b1: { question:'La lettre <strong>A</strong> se prononce :', correct:'ay' },
-    b2: { question:'La lettre <strong>__</strong> se prononce <em>"ell"</em>.', correct:'L' },
-    b3: { question:'La lettre <strong>M</strong> se prononce :', correct:'em' },
-    b4: { question:'La lettre <strong>__</strong> se prononce <em>"vee"</em>.', correct:'V' },
-    b5: { question:'La lettre <strong>U</strong> se prononce :', correct:'you' },
-    b6: { question:'Le mot <strong>"___"</strong> commence par la lettre N (exemple du cours).', correct:'Nest' }
+  var blankData = {
+    b1: { question: 'La lettre <strong>A</strong> se prononce :', correct: 'ay' },
+    b2: { question: 'La lettre <strong>__</strong> se prononce <em>"ell"</em>.', correct: 'L' },
+    b3: { question: 'La lettre <strong>M</strong> se prononce :', correct: 'em' },
+    b4: { question: 'La lettre <strong>__</strong> se prononce <em>"vee"</em>.', correct: 'V' },
+    b5: { question: 'La lettre <strong>U</strong> se prononce :', correct: 'you' },
+    b6: { question: 'Le mot <strong>"___"</strong> commence par la lettre N (exemple du cours).', correct: 'Nest' }
   };
 
-  const openQuestions = [
-    { q:"Écris l'alphabet anglais complet en majuscules, de A à Z, dans le bon ordre.",
-      correction:"A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z" },
-    { q:'Quelle lettre est associée au mot <em>"Unicorn"</em> dans le cours ? Écris aussi sa prononciation.',
-      correction:'Lettre : U · Prononciation : "you"' },
-    { q:'Cite 4 mots du cours commençant par les lettres M, N, O, P.',
-      correction:'M→Mouse · N→Nest · O→Ocean · P→Plant' },
-    { q:"Combien de lettres compte l'alphabet anglais, et quelle est la différence avec l'alphabet français ?",
-      correction:"26 lettres, identique au français. Différence : uniquement la prononciation (ex : A→\"ay\" EN vs \"ah\" FR ; E→\"i\" EN vs \"euh\" FR)." },
-    { q:'Épelle ton prénom en anglais à voix haute, puis écris chaque lettre avec sa prononciation anglaise.',
-      correction:"Exercice personnel — vérifier avec le tableau. Rappel : A=ay · B=bee · C=see · D=dee · E=i · F=eff · G=djee · H=aych · I=eye · J=jay · K=kay · L=ell · M=em · N=en…" }
+  var openQuestions = [
+    { q: "Écris l'alphabet anglais complet en majuscules, de A à Z, dans le bon ordre.",
+      correction: "A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z" },
+    { q: 'Quelle lettre est associée au mot <em>"Unicorn"</em> dans le cours ? Écris aussi sa prononciation.',
+      correction: 'Lettre : U · Prononciation : "you"' },
+    { q: 'Cite 4 mots du cours commençant par les lettres M, N, O, P.',
+      correction: 'M → Mouse · N → Nest · O → Ocean · P → Plant' },
+    { q: "Combien de lettres compte l'alphabet anglais, et quelle est la différence avec l'alphabet français ?",
+      correction: "26 lettres, identique au français. Différence : uniquement la prononciation (ex : A→\"ay\" EN vs \"ah\" FR ; E→\"i\" EN vs \"euh\" FR)." },
+    { q: 'Épelle ton prénom en anglais à voix haute, puis écris chaque lettre avec sa prononciation anglaise.',
+      correction: "Exercice personnel — vérifie avec le tableau. Rappel : A=ay · B=bee · C=see · D=dee · E=i · F=eff · G=djee · H=aych · I=eye · J=jay · K=kay · L=ell · M=em · N=en…" }
   ];
 
-  /* ═══════════════════════════════════════════════
-     ÉTAT GLOBAL
-  ═══════════════════════════════════════════════ */
-  const state = {
+  /* ═══════════════════════════════════════════════════
+     ÉTAT
+  ═══════════════════════════════════════════════════ */
+  var state = {
     qcm:       { q1:null, q2:null, q3:null, q4:null, q5:null },
     qcmChoice: { q1:null, q2:null, q3:null, q4:null, q5:null },
     vf:        { vf1:null, vf2:null, vf3:null, vf4:null, vf5:null, vf6:null },
     vfChoice:  { vf1:null, vf2:null, vf3:null, vf4:null, vf5:null, vf6:null },
-    blanks:    false,
-    blanksDone:false,
-    pairs:     0,
-    pairsMax:  7,
-    open:      false,
+    blanksDone: false,
+    pairs: 0,
     validated: { ex1:false, ex2:false, ex3:false, ex4:false, ex5:false }
   };
 
-  const qcmAnswers = { q1:'djee', q2:'double you', q3:'aych', q4:'why', q5:'zee' };
-  const pairsMap   = { B:'bee', C:'see', F:'eff', K:'kay', O:'oh', S:'ess', X:'ex' };
+  var qcmAnswers = { q1:'djee', q2:'double you', q3:'aych', q4:'why', q5:'zee' };
+  var pairsMap   = { B:'bee', C:'see', F:'eff', K:'kay', O:'oh', S:'ess', X:'ex' };
+  var blankAnswers = {
+    b1: ['ay'],
+    b2: ['l', 'L'],
+    b3: ['em'],
+    b4: ['v', 'V'],
+    b5: ['you'],
+    b6: ['nest', 'Nest', 'NEST']
+  };
 
-  /* ═══════════════════════════════════════════════
-     EXERCICE I — QCM
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     QCM
+  ═══════════════════════════════════════════════════ */
   function checkQCM(btn, chosen, qid) {
     if (state.qcm[qid] !== null) return;
-    const correct = qcmAnswers[qid];
+    var correct = qcmAnswers[qid];
     state.qcm[qid]       = (chosen === correct);
     state.qcmChoice[qid] = chosen;
-    const siblings = btn.closest('.options-grid').querySelectorAll('.option-btn');
-    siblings.forEach(b => {
+    var siblings = btn.closest('.options-grid').querySelectorAll('.option-btn');
+    siblings.forEach(function(b) {
       b.disabled = true;
       if (b.textContent.includes(correct)) b.classList.add('correct');
     });
@@ -1237,97 +1242,83 @@
   }
 
   function updateScoreQCM() {
-    const vals = Object.values(state.qcm).filter(v => v !== null);
-    const ok   = vals.filter(Boolean).length;
+    var vals = Object.values(state.qcm).filter(function(v){ return v !== null; });
+    var ok   = vals.filter(Boolean).length;
     document.getElementById('score1').textContent = ok + ' / 5';
     if (vals.length === 5) { state.validated.ex1 = true; updateProgress(); }
   }
 
-  /* ═══════════════════════════════════════════════
-     EXERCICE II — VRAI / FAUX
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     VRAI / FAUX
+  ═══════════════════════════════════════════════════ */
   function checkVF(btn, chosen, correct, qid) {
     if (state.vf[qid] !== null) return;
-    const isRight = (chosen === correct);
+    var isRight = (chosen === correct);
     state.vf[qid]       = isRight;
     state.vfChoice[qid] = chosen;
     document.getElementById(qid).classList.add('answered');
-    const btns = btn.closest('.vf-buttons').querySelectorAll('.vf-btn');
-    btns.forEach(b => { b.disabled = true; });
+    var btns = btn.closest('.vf-buttons').querySelectorAll('.vf-btn');
+    btns.forEach(function(b) { b.disabled = true; });
     btn.classList.add(isRight ? 'correct' : 'wrong');
     if (!isRight) {
-      btns.forEach(b => {
+      btns.forEach(function(b) {
         if ((b.textContent === 'VRAI' && correct === 'true') ||
             (b.textContent === 'FAUX' && correct === 'false')) b.classList.add('correct');
       });
     }
-    const vals = Object.values(state.vf).filter(v => v !== null);
-    const ok   = vals.filter(Boolean).length;
-    document.getElementById('score2').textContent = ok + ' / 6';
+    var vals = Object.values(state.vf).filter(function(v){ return v !== null; });
+    document.getElementById('score2').textContent = vals.filter(Boolean).length + ' / 6';
     if (vals.length === 6) { state.validated.ex2 = true; updateProgress(); }
   }
 
-  /* ═══════════════════════════════════════════════
-     EXERCICE III — COMPLÉTER LES BLANCS
-  ═══════════════════════════════════════════════ */
-  const blankAnswers = {
-    b1: ['ay'],
-    b2: ['l','L'],
-    b3: ['em'],
-    b4: ['v','V'],
-    b5: ['you'],
-    b6: ['nest','Nest','NEST']
-  };
-
+  /* ═══════════════════════════════════════════════════
+     BLANCS
+  ═══════════════════════════════════════════════════ */
   function checkBlanks() {
-    let ok = 0;
-    for (let id in blankAnswers) {
-      const inp  = document.getElementById(id);
-      const val  = inp.value.trim().toLowerCase();
-      const good = blankAnswers[id].map(a => a.toLowerCase());
-      if (good.includes(val)) {
+    var ok = 0;
+    var ids = ['b1','b2','b3','b4','b5','b6'];
+    for (var i = 0; i < ids.length; i++) {
+      var id  = ids[i];
+      var inp = document.getElementById(id);
+      var val = inp.value.trim().toLowerCase();
+      var good = blankAnswers[id].map(function(a){ return a.toLowerCase(); });
+      if (good.indexOf(val) !== -1) {
         inp.classList.remove('wrong'); inp.classList.add('correct'); ok++;
       } else {
         inp.classList.remove('correct'); inp.classList.add('wrong');
       }
     }
     state.blanksDone = true;
-    const fb = document.getElementById('feedback3');
-    fb.classList.add('show');
+    var fb = document.getElementById('feedback3');
     if (ok === 6) {
       fb.className = 'feedback-msg show success';
       fb.textContent = '✦ Parfait ! Toutes les réponses sont correctes.';
       state.validated.ex3 = true; updateProgress();
     } else {
       fb.className = 'feedback-msg show partial';
-      fb.textContent = `${ok} / 6 bonnes réponses. Vérifie les cases en rouge.`;
+      fb.textContent = ok + ' / 6 bonnes réponses. Vérifie les cases en rouge.';
       if (ok >= 4) { state.validated.ex3 = true; updateProgress(); }
     }
   }
 
-  /* ═══════════════════════════════════════════════
-     EXERCICE IV — RELIER LES PAIRES
-  ═══════════════════════════════════════════════ */
-  let selectedPair = null;
+  /* ═══════════════════════════════════════════════════
+     PAIRES (asymétrique — letters → pronuns)
+  ═══════════════════════════════════════════════════ */
+  var selectedPair = null;
 
   function selectPair(el) {
     if (el.classList.contains('matched')) return;
     if (!selectedPair) {
-      document.querySelectorAll('.pair-item.selected-pair').forEach(e => e.classList.remove('selected-pair'));
-      el.classList.add('selected-pair');
-      selectedPair = el;
-      return;
+      document.querySelectorAll('.pair-item.selected-pair').forEach(function(e){ e.classList.remove('selected-pair'); });
+      el.classList.add('selected-pair'); selectedPair = el; return;
     }
     if (selectedPair === el) { el.classList.remove('selected-pair'); selectedPair = null; return; }
     if (selectedPair.dataset.group === el.dataset.group) {
-      selectedPair.classList.remove('selected-pair');
-      el.classList.add('selected-pair');
-      selectedPair = el;
-      return;
+      selectedPair.classList.remove('selected-pair'); el.classList.add('selected-pair'); selectedPair = el; return;
     }
-    let letterEl = selectedPair.dataset.group === 'letters' ? selectedPair : el;
-    let pronunEl = selectedPair.dataset.group === 'pronuns'  ? selectedPair : el;
-    const correct = (pairsMap[letterEl.dataset.id] === pronunEl.dataset.id);
+    var letterEl = selectedPair.dataset.group === 'letters' ? selectedPair : el;
+    var pronunEl = selectedPair.dataset.group === 'pronuns'  ? selectedPair : el;
+    var correct  = (pairsMap[letterEl.dataset.id] === pronunEl.dataset.id);
     if (correct) {
       letterEl.classList.remove('selected-pair'); letterEl.classList.add('matched');
       pronunEl.classList.remove('selected-pair'); pronunEl.classList.add('matched');
@@ -1335,42 +1326,41 @@
       document.getElementById('score4').textContent = state.pairs + ' / 7';
       if (state.pairs === 7) { state.validated.ex4 = true; updateProgress(); }
     } else {
-      letterEl.classList.add('wrong-pair'); pronunEl.classList.add('wrong-pair');
-      setTimeout(() => {
-        letterEl.classList.remove('wrong-pair','selected-pair');
-        pronunEl.classList.remove('wrong-pair','selected-pair');
+      var sp = selectedPair;
+      sp.classList.add('wrong-pair'); el.classList.add('wrong-pair');
+      setTimeout(function(){
+        sp.classList.remove('wrong-pair','selected-pair');
+        el.classList.remove('wrong-pair','selected-pair');
       }, 600);
     }
     selectedPair = null;
   }
 
-  /* ═══════════════════════════════════════════════
-     EXERCICE V — QUESTIONS OUVERTES
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     QUESTIONS OUVERTES
+  ═══════════════════════════════════════════════════ */
   function revealAnswer(inputId, corrId) {
     document.getElementById(corrId).classList.add('visible');
     state.validated.ex5 = true;
     updateProgress();
   }
 
-  /* ═══════════════════════════════════════════════
-     BARRE DE PROGRESSION
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     PROGRESSION
+  ═══════════════════════════════════════════════════ */
   function updateProgress() {
-    const done = Object.values(state.validated).filter(Boolean).length;
-    const pct  = (done / 5) * 100;
-    document.getElementById('progressBar').style.width = pct + '%';
+    var done = Object.values(state.validated).filter(Boolean).length;
+    document.getElementById('progressBar').style.width = (done / 5 * 100) + '%';
     document.getElementById('progressLabel').textContent = done + ' / 5 exercices validés';
   }
 
-  /* ═══════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════
      SOUMETTRE
-  ═══════════════════════════════════════════════ */
+  ═══════════════════════════════════════════════════ */
   function submitAnswers() {
-    const nameEl = document.getElementById('studentName');
-    const errEl  = document.getElementById('nameError');
-    const name   = nameEl.value.trim();
-
+    var nameEl = document.getElementById('studentName');
+    var errEl  = document.getElementById('nameError');
+    var name   = nameEl.value.trim();
     if (!name) {
       nameEl.classList.add('error');
       errEl.style.display = 'block';
@@ -1381,205 +1371,249 @@
     nameEl.classList.remove('error');
     errEl.style.display = 'none';
 
-    /* Forcer la vérification des blancs si pas encore fait */
     if (!state.blanksDone) checkBlanks();
 
-    /* Révéler toutes les corrections ouvertes */
-    for (let i = 1; i <= 5; i++) {
-      const el = document.getElementById('corr' + i);
+    var corrIds = ['corr1','corr2','corr3','corr4','corr5'];
+    for (var i = 0; i < corrIds.length; i++) {
+      var el = document.getElementById(corrIds[i]);
       if (el) el.classList.add('visible');
     }
     state.validated.ex5 = true;
     updateProgress();
-
     showResults(name);
   }
 
-  /* ═══════════════════════════════════════════════
-     HELPER : CERCLE DE SCORE
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     CERCLE DE SCORE
+  ═══════════════════════════════════════════════════ */
   function setCircle(id, ok, total) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (!el) return;
     el.textContent = ok + '/' + total;
-    const r = total > 0 ? ok / total : 0;
+    var r = total > 0 ? ok / total : 0;
     el.className = 'ex-score-circle ' + (r >= 0.8 ? 'green' : r >= 0.5 ? 'gold' : 'red');
   }
 
-  /* ═══════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════
      AFFICHER LES RÉSULTATS
-  ═══════════════════════════════════════════════ */
+  ═══════════════════════════════════════════════════ */
+
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
+  var sectionHints={qcm:'Les lettres piégées sont G (djee), H (aych), Y (why), Z (zee), W (double you) — relis le tableau des prononciations.',vf:'Revois les lettres muettes et les doubles consonnes (LL, MM). Récite l’alphabet à voix haute.',blancs:'Les blancs testent la reconnaissance des lettres dans des mots réels. Entraîne-toi à épeler en anglais.',paires:'Associe chaque lettre à sa prononciation anglaise. Concentre-toi sur celles qui diffèrent du français.',excellent:'Manuel Basique bien démarré ! Ready for Section 02 — Numbers.',ref:'→ Relis la <strong>Section 01 du Manuel Basique</strong> : tableau complet des 26 lettres et prononciations.'};
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
   function showResults(name) {
-    /* Calcul scores */
-    const qcmOk = Object.values(state.qcm).filter(Boolean).length;
-    const vfOk  = Object.values(state.vf).filter(Boolean).length;
-    let blanksOk = 0;
-    for (let id in blankAnswers) {
-      const inp = document.getElementById(id);
+    var qcmOk = Object.values(state.qcm).filter(Boolean).length;
+    var vfOk  = Object.values(state.vf).filter(Boolean).length;
+    var blanksOk = 0;
+    var bids = ['b1','b2','b3','b4','b5','b6'];
+    for (var i = 0; i < bids.length; i++) {
+      var inp = document.getElementById(bids[i]);
       if (inp && inp.classList.contains('correct')) blanksOk++;
     }
-    const pairsOk  = state.pairs;
-    const totalPts = qcmOk + vfOk + blanksOk + pairsOk;
-    const maxPts   = 5 + 6 + 6 + 7;
-    const pct      = Math.round((totalPts / maxPts) * 100);
+    var pairsOk  = state.pairs;
+    var totalPts = qcmOk + vfOk + blanksOk + pairsOk;
+    var maxPts   = 5 + 6 + 6 + 7;
+    var pct      = Math.round((totalPts / maxPts) * 100);fetch('https://formspree.io/f/mbdezeqo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:name,section:'Section 01 — The English Alphabet | Exercices CATON Academy',score:pct+'%',qcm:qcmOk+'/5',vf:vfOk+'/6',blancs:blanksOk+'/6',paires:pairsOk+'/8'})}).catch(function(){});
 
-    /* Mettre à jour l'en-tête */
     document.getElementById('resultStudentName').textContent = name;
     document.getElementById('finalScore').textContent = pct + '%';
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
 
-    /* Cercles */
     setCircle('circleEx1', qcmOk, 5);
     setCircle('circleEx2', vfOk,  6);
     setCircle('circleEx3', blanksOk, 6);
     setCircle('circleEx4', pairsOk, 7);
-    const c5 = document.getElementById('circleEx5');
+    var c5 = document.getElementById('circleEx5');
     c5.textContent = '—'; c5.className = 'ex-score-circle grey';
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
 
-    /* Message global */
-    let msg;
-    if (pct >= 85) msg = "Excellent travail ! Tu maîtrises la prononciation de l'alphabet anglais. Ready for Section 02 !";
-    else if (pct >= 65) msg = "Bon résultat ! Revois quelques prononciations difficiles (G, H, W) et refais les exercices.";
-    else msg = "Continue à t'entraîner ! Relis le tableau de prononciation du cours puis retente les exercices.";
-    document.getElementById('finalMessage').textContent = msg;
-
-    /* Construire les corrections */
     buildCorrections(qcmOk, vfOk, blanksOk, pairsOk);
 
-    const r = document.getElementById('resultsSection');
+    var r = document.getElementById('resultsSection');
     r.classList.add('visible');
     r.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
-  /* ═══════════════════════════════════════════════
-     CONSTRUIRE LE PANNEAU DE CORRECTIONS
-  ═══════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     CORRECTIONS DÉTAILLÉES  (sans template literals imbriqués)
+  ═══════════════════════════════════════════════════ */
+  function ci(status, question, given, correct) {
+    var h = '<div class="corr-item ' + status + '">';
+    h += '<span class="corr-q">' + question + '</span>';
+    if (given   !== null && given   !== undefined) h += '<span class="corr-given">'   + given   + '</span>';
+    if (correct !== null && correct !== undefined) h += '<span class="corr-correct">' + correct + '</span>';
+    h += '</div>';
+    return h;
+  }
+
   function buildCorrections(qcmOk, vfOk, blanksOk, pairsOk) {
-    let html = '';
+    var html = '';
 
-    /* ── I : QCM ── */
-    html += `<div class="corr-ex-block">
-      <div class="corr-ex-header">
-        <span class="corr-ex-title">I — QCM : Choix Multiple</span>
-        <span class="corr-ex-score">${qcmOk} / 5</span>
-      </div>`;
-    ['q1','q2','q3','q4','q5'].forEach(qid => {
-      const correct = qcmAnswers[qid];
-      const chosen  = state.qcmChoice[qid];
-      const isOk    = state.qcm[qid];
-      const q       = qcmQuestions[qid];
+    /* ── I QCM ── */
+    html += '<div class="corr-ex-block">';
+    html += '<div class="corr-ex-header">';
+    html += '<span class="corr-ex-title">I — QCM : Choix Multiple</span>';
+    html += '<span class="corr-ex-score">' + qcmOk + ' / 5</span>';
+    html += '</div>';
+
+    var qids = ['q1','q2','q3','q4','q5'];
+    for (var i = 0; i < qids.length; i++) {
+      var qid     = qids[i];
+      var correct = qcmAnswers[qid];
+      var chosen  = state.qcmChoice[qid];
+      var isOk    = state.qcm[qid];
+      var q       = qcmQuestions[qid];
       if (isOk === null) {
-        html += `<div class="corr-item na"><span class="corr-q">${q}</span>
-          <span style="color:var(--neutral);font-size:.84rem">— Non répondu &nbsp;·&nbsp; Réponse : <strong style="color:var(--correct)">${correct}</strong></span></div>`;
+        html += ci('na', q + '<span style="color:var(--neutral);font-size:.84rem"> — Non répondu · Réponse : ' + correct + '</span>', null, null);
       } else if (isOk) {
-        html += `<div class="corr-item ok"><span class="corr-q">${q}</span>
-          <span class="corr-correct">${chosen}</span></div>`;
+        html += ci('ok', q, null, chosen);
       } else {
-        html += `<div class="corr-item ko"><span class="corr-q">${q}</span>
-          <span class="corr-given">${chosen}</span>
-          <span class="corr-correct">${correct}</span></div>`;
+        html += ci('ko', q, chosen, correct);
       }
-    });
-    html += `</div>`;
+    }
+    html += '</div>';
 
-    /* ── II : Vrai / Faux ── */
-    html += `<div class="corr-ex-block">
-      <div class="corr-ex-header">
-        <span class="corr-ex-title">II — Vrai / Faux</span>
-        <span class="corr-ex-score">${vfOk} / 6</span>
-      </div>`;
-    ['vf1','vf2','vf3','vf4','vf5','vf6'].forEach(vid => {
-      const cr    = vfCorrectMap[vid];
-      const crLbl = cr === 'true' ? 'VRAI' : 'FAUX';
-      const ch    = state.vfChoice[vid];
-      const chLbl = ch === 'true' ? 'VRAI' : ch === 'false' ? 'FAUX' : null;
-      const isOk  = state.vf[vid];
-      const q     = vfQuestions[vid];
-      if (isOk === null) {
-        html += `<div class="corr-item na"><span class="corr-q">${q}</span>
-          <span style="color:var(--neutral);font-size:.84rem">— Non répondu &nbsp;·&nbsp; Réponse : <strong style="color:var(--correct)">${crLbl}</strong></span></div>`;
-      } else if (isOk) {
-        html += `<div class="corr-item ok"><span class="corr-q">${q}</span>
-          <span class="corr-correct">${chLbl}</span></div>`;
+    /* ── II V/F ── */
+    html += '<div class="corr-ex-block">';
+    html += '<div class="corr-ex-header">';
+    html += '<span class="corr-ex-title">II — Vrai / Faux</span>';
+    html += '<span class="corr-ex-score">' + vfOk + ' / 6</span>';
+    html += '</div>';
+
+    var vids = ['vf1','vf2','vf3','vf4','vf5','vf6'];
+    for (var j = 0; j < vids.length; j++) {
+      var vid  = vids[j];
+      var cr   = vfCorrectMap[vid];
+      var crLbl = (cr === 'true') ? 'VRAI' : 'FAUX';
+      var ch   = state.vfChoice[vid];
+      var chLbl = (ch === 'true') ? 'VRAI' : (ch === 'false') ? 'FAUX' : null;
+      var isVok = state.vf[vid];
+      var vq   = vfQuestions[vid];
+      if (isVok === null) {
+        html += ci('na', vq + '<span style="color:var(--neutral);font-size:.84rem"> — Non répondu · Réponse : ' + crLbl + '</span>', null, null);
+      } else if (isVok) {
+        html += ci('ok', vq, null, chLbl);
       } else {
-        html += `<div class="corr-item ko"><span class="corr-q">${q}</span>
-          <span class="corr-given">${chLbl}</span>
-          <span class="corr-correct">${crLbl}</span></div>`;
+        html += ci('ko', vq, chLbl, crLbl);
       }
-    });
-    html += `</div>`;
+    }
+    html += '</div>';
 
-    /* ── III : Blancs ── */
-    html += `<div class="corr-ex-block">
-      <div class="corr-ex-header">
-        <span class="corr-ex-title">III — Compléter les blancs</span>
-        <span class="corr-ex-score">${blanksOk} / 6</span>
-      </div>`;
-    for (let bid in blankData) {
-      const inp  = document.getElementById(bid);
-      const val  = inp ? inp.value.trim() : '';
-      const isOk = inp && inp.classList.contains('correct');
-      const { question, correct } = blankData[bid];
+    /* ── III Blancs ── */
+    html += '<div class="corr-ex-block">';
+    html += '<div class="corr-ex-header">';
+    html += '<span class="corr-ex-title">III — Compléter les blancs</span>';
+    html += '<span class="corr-ex-score">' + blanksOk + ' / 6</span>';
+    html += '</div>';
+
+    var bids2 = ['b1','b2','b3','b4','b5','b6'];
+    for (var k = 0; k < bids2.length; k++) {
+      var bid  = bids2[k];
+      var binp = document.getElementById(bid);
+      var bval = binp ? binp.value.trim() : '';
+      var bisOk = binp && binp.classList.contains('correct');
+      var bq   = blankData[bid].question;
+      var bc   = blankData[bid].correct;
       if (!state.blanksDone) {
-        html += `<div class="corr-item na"><span class="corr-q">${question}</span>
-          <span style="color:var(--neutral);font-size:.84rem">— Non vérifié &nbsp;·&nbsp; Réponse : <strong style="color:var(--correct)">${correct}</strong></span></div>`;
-      } else if (isOk) {
-        html += `<div class="corr-item ok"><span class="corr-q">${question}</span>
-          <span class="corr-correct">${val}</span></div>`;
+        html += ci('na', bq + '<span style="color:var(--neutral);font-size:.84rem"> — Non vérifié · Réponse : ' + bc + '</span>', null, null);
+      } else if (bisOk) {
+        html += ci('ok', bq, null, bval);
       } else {
-        html += `<div class="corr-item ko"><span class="corr-q">${question}</span>
-          ${val ? `<span class="corr-given">${val}</span>` : '<span style="color:var(--neutral);font-size:.84rem">— Non répondu</span>'}
-          <span class="corr-correct">${correct}</span></div>`;
+        var givenSpan = bval ? bval : '<span style="color:var(--neutral);font-size:.84rem">— Non répondu</span>';
+        html += ci('ko', bq, givenSpan, bc);
       }
     }
-    html += `</div>`;
+    html += '</div>';
 
-    /* ── IV : Paires ── */
-    html += `<div class="corr-ex-block">
-      <div class="corr-ex-header">
-        <span class="corr-ex-title">IV — Relier les paires</span>
-        <span class="corr-ex-score">${pairsOk} / 7</span>
-      </div>`;
-    for (let letter in pairsMap) {
-      const pron    = pairsMap[letter];
-      const matchEl = document.querySelector(`.pair-item[data-group="letters"][data-id="${letter}"]`);
-      const matched = matchEl && matchEl.classList.contains('matched');
+    /* ── IV Paires ── */
+    html += '<div class="corr-ex-block">';
+    html += '<div class="corr-ex-header">';
+    html += '<span class="corr-ex-title">IV — Relier les paires</span>';
+    html += '<span class="corr-ex-score">' + pairsOk + ' / 7</span>';
+    html += '</div>';
+
+    var letters = ['B','C','F','K','O','S','X'];
+    for (var m = 0; m < letters.length; m++) {
+      var letter  = letters[m];
+      var pron    = pairsMap[letter];
+      var matchEl = document.querySelector('.pair-item[data-group="letters"][data-id="' + letter + '"]');
+      var matched = matchEl && matchEl.classList.contains('matched');
       if (matched) {
-        html += `<div class="corr-item ok"><span class="corr-q">Lettre <strong>${letter}</strong></span>
-          <span class="corr-correct">${pron}</span></div>`;
+        html += ci('ok', 'Lettre <strong>' + letter + '</strong>', null, pron);
       } else {
-        html += `<div class="corr-item ko"><span class="corr-q">Lettre <strong>${letter}</strong></span>
-          <span style="color:var(--neutral);font-size:.84rem">— Non apparié</span>
-          <span class="corr-correct">${pron}</span></div>`;
+        html += ci('ko', 'Lettre <strong>' + letter + '</strong>', '<span style="color:var(--neutral);font-size:.84rem">— Non apparié</span>', pron);
       }
     }
-    html += `</div>`;
+    html += '</div>';
 
-    /* ── V : Questions ouvertes ── */
-    html += `<div class="corr-ex-block">
-      <div class="corr-ex-header">
-        <span class="corr-ex-title">V — Questions ouvertes</span>
-        <span class="corr-ex-score" style="background:rgba(255,255,255,0.05);color:var(--neutral);border-color:rgba(255,255,255,0.1)">Auto-évaluation</span>
-      </div>
-      <p style="font-size:.86rem;color:var(--neutral);font-style:italic;margin-bottom:14px;">
-        Ces questions sont évaluées manuellement. Compare ta réponse à la correction proposée.
-      </p>`;
-    openQuestions.forEach((item, i) => {
-      const ta  = document.getElementById('oq' + (i+1));
-      const val = ta ? ta.value.trim() : '';
-      html += `<div class="corr-item open">
-        <span class="corr-q"><strong>${i+1}.</strong> ${item.q}</span>
-        ${val ? `<span class="corr-open-ans">${val}</span>` : '<span style="color:var(--neutral);font-size:.84rem">— Non répondu</span>'}
-        <span class="corr-model">${item.correction}</span>
-      </div>`;
-    });
-    html += `</div>`;
+    /* ── V Questions ouvertes ── */
+    html += '<div class="corr-ex-block">';
+    html += '<div class="corr-ex-header">';
+    html += '<span class="corr-ex-title">V — Questions ouvertes</span>';
+    html += '<span class="corr-ex-score" style="background:rgba(255,255,255,0.05);color:var(--neutral);border-color:rgba(255,255,255,0.1)">Auto-évaluation</span>';
+    html += '</div>';
+    html += '<p style="font-size:.86rem;color:var(--neutral);font-style:italic;margin-bottom:14px;">Questions évaluées manuellement. Compare ta réponse au corrigé.</p>';
+
+    for (var n = 0; n < openQuestions.length; n++) {
+      var oq  = openQuestions[n];
+      var ta  = document.getElementById('oq' + (n+1));
+      var tav = ta ? ta.value.trim() : '';
+      html += '<div class="corr-item open">';
+      html += '<span class="corr-q"><strong>' + (n+1) + '.</strong> ' + oq.q + '</span>';
+      if (tav) {
+        html += '<span class="corr-open-ans">' + tav + '</span>';
+      } else {
+        html += '<span style="color:var(--neutral);font-size:.84rem">— Non répondu</span>';
+      }
+      html += '<span class="corr-model">' + oq.correction + '</span>';
+      html += '</div>';
+    }
+    html += '</div>';
 
     document.getElementById('correctionsContent').innerHTML = html;
   }
 
-  /* ═══════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════
      RECOMMENCER
-  ═══════════════════════════════════════════════ */
+  ═══════════════════════════════════════════════════ */
   function retryAll() { location.reload(); }
 </script>
 </body>

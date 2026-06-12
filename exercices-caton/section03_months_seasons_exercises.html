@@ -929,6 +929,48 @@
   /* ═══════════════════════════════════════════════════
      AFFICHER LES RÉSULTATS
   ═══════════════════════════════════════════════════ */
+
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
+  var sectionHints={qcm:'Revois les noms des mois (February, August) et les associations mois/saison. Les saisons dépendent de l’hémisphère !',vf:'Certains mois tombent à cheval sur deux saisons. Relis le tableau pour les associations correctes.',blancs:'Les blancs testent les mois dans des phrases. Mémorise l’ordre et les abréviations (Jan, Feb, Mar…).',paires:'Associe mois et saisons. Revois quels mois correspondent à quelles saisons selon le cours.',excellent:'Excellent ! Ready for Section 04 — Weather.',ref:'→ Relis la <strong>Section 03 du Manuel Basique</strong> : tableau des 12 mois et 4 saisons.'};
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
   function showResults(name) {
     const qcmOk = Object.values(state.qcm).filter(Boolean).length;
     const vfOk  = Object.values(state.vf).filter(Boolean).length;
@@ -944,6 +986,8 @@
 
     document.getElementById('resultStudentName').textContent = name;
     document.getElementById('finalScore').textContent = pct + '%';
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
+    fetch('https://formspree.io/f/mbdezeqo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:name,section:'Section 03 — Months and Seasons | Exercices CATON Academy',score:pct+'%',qcm:qcmOk+'/5',vf:vfOk+'/6',blancs:blanksOk+'/6',paires:pairsOk+'/8'})}).catch(function(){});
 
     setCircle('circleEx1', qcmOk, 5);
     setCircle('circleEx2', vfOk,  6);
@@ -956,7 +1000,7 @@
     if (pct >= 85) msg = "Excellent ! Tu maîtrises les mois et saisons en anglais. Ready for Section 04 — The Weather !";
     else if (pct >= 65) msg = "Bon travail ! Revois les saisons caribéennes et l'ordre des mois. Continue !";
     else msg = "Continue à t'entraîner ! Relis le tableau du cours et retente les exercices.";
-    document.getElementById('finalMessage').textContent = msg;
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
 
     buildCorrections(qcmOk, vfOk, blanksOk, pairsOk);
 

@@ -618,23 +618,40 @@
     el.className='ex-score-circle '+(r>=0.8?'green':r>=0.5?'gold':'red');
   }
 
+  var sectionHints={qcm:'Revois les 4 formules : o’clock, quarter past, half past, quarter to. Long hand = minutes, short hand = heures.',vf:'Attention : quarter to donne l’heure SUIVANTE. Ex : 4h45 = quarter to five (pas four).',blancs:'Les blancs testent les formules en contexte. Entraîne-toi à convertir des heures en toutes lettres.',paires:'Associe chaque heure digitale à sa formule. Attention : quarter to référence l’heure suivante.',excellent:'Excellent ! Ready for Section 09 — Human Body.',ref:'→ Relis la <strong>Section 08 du Manuel Basique</strong> : tableau des 4 formules pour l’heure.'};
+  function buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct){
+    var qr=qcmOk/5,vr=vfOk/6,br=blanksOk/6,pr=pairsOk/8;
+    var h='';
+    if(pct>=85)h+='<span style="color:var(--correct);font-weight:700">❆ Excellent — tu maîtrises bien cette section.</span>';
+    else if(pct>=65)h+='<span style="color:var(--gold);font-weight:700">❆ Bon travail — quelques points à consolider.</span>';
+    else if(pct>=40)h+='<span style="color:#e8a838;font-weight:700">❆ En progression — revois les points clés ci-dessous.</span>';
+    else h+='<span style="color:var(--wrong);font-weight:700">❆ Cette section mérite une révision complète avant de continuer.</span>';
+    var weak=[];
+    if(qr<0.6)weak.push('<li><strong>QCM ('+qcmOk+'/5) :</strong> '+sectionHints.qcm+'</li>');
+    if(vr<0.6)weak.push('<li><strong>Vrai\/Faux ('+vfOk+'/6) :</strong> '+sectionHints.vf+'</li>');
+    if(br<0.6)weak.push('<li><strong>Blancs ('+blanksOk+'/6) :</strong> '+sectionHints.blancs+'</li>');
+    if(pr<0.6)weak.push('<li><strong>Paires ('+pairsOk+'/8) :</strong> '+sectionHints.paires+'</li>');
+    if(weak.length===0){
+      h+='<br><span style="color:var(--neutral);font-style:italic;font-size:.95rem">'+sectionHints.excellent+'</span>';
+    }else{
+      h+='<ul style="text-align:left;margin:12px auto 8px;max-width:500px;list-style:disc;padding-left:20px;font-size:.9rem;line-height:1.6">'+weak.join('')+'</ul>';
+      h+='<p style="color:var(--gold);font-style:italic;font-size:.88rem;margin-top:8px">'+sectionHints.ref+'</p>';
+    }
+    return h;
+  }
   function showResults(name){
     var qcmOk=Object.values(state.qcm).filter(Boolean).length;
     var vfOk=Object.values(state.vf).filter(Boolean).length;
     var blanksOk=0;var bids=['b1','b2','b3','b4','b5','b6'];
     for(var i=0;i<bids.length;i++){var inp=document.getElementById(bids[i]);if(inp&&inp.classList.contains('correct'))blanksOk++;}
     var pairsOk=state.pairs;
-    var pct=Math.round(((qcmOk+vfOk+blanksOk+pairsOk)/(5+6+6+8))*100);
+    var pct=Math.round(((qcmOk+vfOk+blanksOk+pairsOk)/(5+6+6+8))*100);fetch('https://formspree.io/f/mbdezeqo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom:name,section:'Section 08 — Time | Exercices CATON Academy',score:pct+'%',qcm:qcmOk+'/5',vf:vfOk+'/6',blancs:blanksOk+'/6',paires:pairsOk+'/8'})}).catch(function(){});
     document.getElementById('resultStudentName').textContent=name;
     document.getElementById('finalScore').textContent=pct+'%';
     setCircle('circleEx1',qcmOk,5);setCircle('circleEx2',vfOk,6);
     setCircle('circleEx3',blanksOk,6);setCircle('circleEx4',pairsOk,8);
     var c5=document.getElementById('circleEx5');c5.textContent='\u2014';c5.className='ex-score-circle grey';
-    var msg;
-    if(pct>=85)msg='Excellent ! Tu ma\u00eetrises les heures en anglais. Ready for Section 09 !';
-    else if(pct>=65)msg='Bon travail ! Revois les formules quarter to / quarter past / half past et l\'heure directe.';
-    else msg='Continue ! M\u00e9morise les 4 formules et entra\u00eene-toi avec les heures du cours.';
-    document.getElementById('finalMessage').textContent=msg;
+    document.getElementById('finalMessage').innerHTML=buildFeedback(qcmOk,vfOk,blanksOk,pairsOk,pct);
     buildCorrections(qcmOk,vfOk,blanksOk,pairsOk);
     var r=document.getElementById('resultsSection');r.classList.add('visible');r.scrollIntoView({behavior:'smooth',block:'start'});
   }
