@@ -114,22 +114,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 .sec-row-fill{height:100%;border-radius:4px;transition:width 1s .2s;}
 .sec-row-val{font-size:12px;font-weight:600;color:var(--muted);width:50px;text-align:right;flex-shrink:0;}
 .fill-ok{background:#1F9254;}.fill-mid{background:#D08A00;}.fill-ko{background:#C0392B;}
-/* CATON CORRECTION */
-.r-opt.ca-ok{background:#E6F4EC!important;border-color:#1F9254!important;color:#1F9254!important;font-weight:600!important;}
-.r-opt.ca-ko{background:#FDECEA!important;border-color:#C0392B!important;color:#C0392B!important;}
-.r-opt.ca-lock{pointer-events:none!important;cursor:default!important;}
-.inp-ok{border-color:#1F9254!important;background:#E6F4EC!important;color:#1F9254!important;font-weight:600;}
-.inp-ko{border-color:#C0392B!important;background:#FDECEA!important;}
-.inp-pend{border-color:#D08A00!important;background:#FFF8E1!important;}
-.fb{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:5px;margin-top:5px;width:fit-content;}
-.fb-ok{background:#E6F4EC;color:#1F9254;border:1px solid #1F9254;}
-.fb-ko{background:#FDECEA;color:#C0392B;border:1px solid #C0392B;}
-.fb-pend{background:#FFF8E1;color:#D08A00;border:1px solid #D08A00;}
-.ca-score{display:flex;flex-direction:column;align-items:center;gap:1px;}
-.ca-sval{font-size:19px;font-weight:700;color:#D1AF5F;font-variant-numeric:tabular-nums;}
-.ca-slbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.7px;}
-.ca-sbar{width:56px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:3px;}
-.ca-sfill{height:100%;background:#D1AF5F;border-radius:2px;transition:width .4s;}
 </style>
 </head>
 <body>
@@ -141,9 +125,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <div class="header-title">Test de Positionnement · A1→C1</div>
     </div>
     <div class="timer-wrap">
-      <div class="timer-display" id="timer">15:00</div>
-      <div class="timer-label">Temps restant</div>
-      <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+      <div class="timer-display" style="font-size:14px">A1 → C1</div>
+      <div class="timer-label">Durée estimée · 15–20 min</div>
     </div>
   </div>
 </header>
@@ -167,13 +150,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <h1 class="hero-title">Test de Positionnement<br>Tous niveaux · A1→C1</h1>
     <p class="hero-sub">Réponds aussi loin que tu peux — laisse les questions difficiles sans réponse, c'est normal.</p>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-val">15'</div><div class="hero-stat-lbl">Durée</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">15–20'</div><div class="hero-stat-lbl">Durée estimée</div></div>
       <div class="hero-stat"><div class="hero-stat-val">32</div><div class="hero-stat-lbl">Points max</div></div>
       <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-lbl">Sections</div></div>
     </div>
   </div>
   <div class="progress-badge">📍 Cours Offert · Évaluation du niveau initial · Résultat communiqué par Lenny après le cours</div>
-  <div class="callout callout-warn">⚠️ <strong>Consigne importante :</strong> Ne cherche pas les réponses sur Internet. Travaille seul(e), de manière honnête. Le but est de <em>connaître ton vrai niveau</em> pour te proposer la formule la plus adaptée.</div>
+  <div id="revisionBanner" style="display:none;background:var(--gold-pale);border:1px solid var(--gold);border-radius:8px;padding:12px 16px;font-size:13px;color:#7A5C00;margin-bottom:14px;"></div>
+  <div class="callout callout-warn">⚠️ <strong>Consignes importantes :</strong> Durée estimée 15–20 minutes. Réponds <em>seul(e)</em>, sans dictionnaire ni traducteur, en <em>une seule passation</em>. Le but est de <em>connaître ton vrai niveau</em> pour te proposer la formule la plus adaptée.</div>
+  <div class="callout">💡 <strong>Astuce :</strong> mieux vaut cocher « Je ne sais pas » que répondre au hasard — le test sera plus juste pour toi. Laisse aussi les traductions difficiles vides, c'est normal.</div>
   <div class="id-grid">
     <div class="id-block"><label>Nom et prénom *</label><input class="n-input" id="id-nom" placeholder="Marie Dupont" required></div>
     <div class="id-block"><label>Email *</label><input class="n-input" id="id-email" type="email" placeholder="marie@email.com" required></div>
@@ -205,7 +190,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       </select>
     </div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : GRAMMAIRE -->
@@ -214,7 +199,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="section-header">
       <span class="section-badge">SECTION 1</span>
       <span class="section-title">Grammaire</span>
-      <span class="section-pts">16 pts · 5 min</span>
+      <span class="section-pts">12 pts · 5 min</span>
     </div>
 
     <div class="subsection">
@@ -319,7 +304,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="section-header">
       <span class="section-badge">SECTION 4</span>
       <span class="section-title">Expression écrite</span>
-      <span class="section-pts">4 pts · 2 min</span>
+      <span class="section-pts">Correction formateur · 2 min</span>
     </div>
     <div class="callout">ℹ <strong>Consigne :</strong> Réponds en anglais. Une ou deux phrases par question suffisent. Écris naturellement, comme tu parles.</div>
 
@@ -336,7 +321,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <textarea class="n-ta" id="ex3" rows="3" placeholder="One challenge I faced was … I dealt with it by …"></textarea>
     </div>
 
-    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button></div>
+    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom, ton email et tes résultats sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique et pour te recontacter.</p></div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(3)">← Retour</button><div></div></div>
 </div>
@@ -344,12 +330,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=900,rem=900,tInt;
+var cur=0,startTime=null;
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';if(rem<=120)document.getElementById('timer').style.color='#C0392B';},1000);}
-startTimer();
+
+function startTest(){
+  var nom=getVal('id-nom');
+  if(!nom){alert('Merci de saisir ton nom et prénom avant de commencer.');return;}
+  var email=getVal('id-email');
+  if(!email||email.indexOf('@')===-1){alert('Merci de saisir une adresse email valide (avec @) avant de commencer.');return;}
+  if(startTime===null){startTime=Date.now();}
+  goSec(1);
+}
 
 function goSec(n){
+  if(n>0&&startTime===null){alert('Clique sur « ✦ Commencer le test » pour démarrer.');return;}
   document.getElementById('sec'+cur).classList.remove('active');
   document.getElementById('sec'+n).classList.add('active');
   var tabs=document.querySelectorAll('.pnav-item');
@@ -359,6 +353,7 @@ function goSec(n){
 }
 
 /* === QCM DATA === */
+var IDK_LABEL='Je ne sais pas';
 var qcm1a=[
   {id:'g1',q:'She _______ to work every day by bus.',opts:['A — go','B — goes','C — going','D — gone']},
   {id:'g2',q:'I _______ TV when you called me.',opts:['A — watch','B — watched','C — was watching','D — am watching']},
@@ -378,11 +373,19 @@ var qcm1c=[
   {id:'g12',q:'She was reluctant to commit, _______ she eventually agreed to lead the project.',opts:['A — yet','B — so','C — because','D — unless']},
 ];
 
+function optHtml(name,o){
+  var letter=o.charAt(0); /* data-val = lettre stricte, jamais de includes() */
+  return '<label class="r-opt"><input type="radio" name="'+name+'" value="'+o.replace(/"/g,'&quot;')+'" data-val="'+letter+'"> '+o+'</label>';
+}
+function idkHtml(name){
+  return '<label class="r-opt" style="border-style:dashed;color:var(--muted)"><input type="radio" name="'+name+'" value="'+IDK_LABEL+'" data-val="idk"> 🤷 '+IDK_LABEL+'</label>';
+}
 function buildQcm(data,containerId){
   var div=document.getElementById(containerId);
   data.forEach(function(q,i){
     var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
-    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    q.opts.forEach(function(o){h+=optHtml(q.id,o);});
+    h+=idkHtml(q.id);
     h+='</div></div>';div.innerHTML+=h;
   });
 }
@@ -407,7 +410,8 @@ function buildRead(data,containerId){
   var div=document.getElementById(containerId);
   data.forEach(function(q){
     var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    q.opts.forEach(function(o){h+=optHtml(q.id,o);});
+    h+=idkHtml(q.id);
     h+='</div></div>';div.innerHTML+=h;
   });
 }
@@ -423,143 +427,219 @@ document.addEventListener('change',function(e){
   }
 });
 
-function getRadio(name){var el=document.querySelector('input[name="'+name+'\"]:checked');return el?el.value:'';}
+function getRadioVal(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?(el.dataset.val||''):'';}
+function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
-/* === CALCUL DE NIVEAU === */
+/* === CALCUL DE NIVEAU — clé de correction UNIQUE (lettres, comparaison stricte data-val) === */
 var CORRECT_ANSWERS={
-  g1:'B — goes',g2:'C — was watching',g3:'C — There is',g4:'D — were',
-  g5:'B — had',g6:'C — has worked',g7:'D — had been / finished',g8:'C — had studied',
-  g9:'B — did they deliver',g10:'C — to which',g11:'C — Had',g12:'A — yet',
-  ra1:"B — Nine o'clock",ra2:'C — The commute',ra3:'C — On Fridays',ra4:'B — Move closer to the office',
-  rb1:'C — It may weaken corporate culture',rb2:'B — Practical and realistic',rb3:'C — Clear communication and accountability must be established',rb4:'B — Suppress / hinder'
+  g1:'B',g2:'C',g3:'C',g4:'D',
+  g5:'B',g6:'C',g7:'D',g8:'C',
+  g9:'B',g10:'C',g11:'C',g12:'A',
+  ra1:'B',ra2:'C',ra3:'C',ra4:'B',
+  rb1:'C',rb2:'B',rb3:'C',rb4:'B'
 };
+/* Tolérance orthographique raisonnable : articles, infinitifs, variantes plausibles */
 var VOCAB_ANSWERS={
-  va1:['work','job'],va2:['a house','house'],va3:['doctor','a doctor','physician','a physician'],va4:['buy','to buy','purchase','to purchase'],
-  vb1:['meeting','a meeting'],vb2:['complaint','a complaint'],vb3:['improve','to improve','enhance','to enhance'],vb4:['human resources','the human resources','hr','the hr','human resource','the human resource'],
-  vc1:['gap','shortcoming','a gap','weakness','a weakness','deficiency','a deficiency'],vc2:['nuance','a nuance'],vc3:['essential','key','unmissable','must-have','a must'],vc4:['outdated','obsolete','old-fashioned']
+  va1:['work','the work','job','a job','the job'],
+  va2:['a house','house','the house','home','a home'],
+  va3:['doctor','a doctor','the doctor','physician','a physician'],
+  va4:['buy','to buy','purchase','to purchase'],
+  vb1:['meeting','a meeting','the meeting'],
+  vb2:['complaint','a complaint','claim','a claim'],
+  vb3:['improve','to improve','enhance','to enhance','better','to better'],
+  vb4:['human resources','the human resources','hr','the hr','human resource','the human resource'],
+  vc1:['gap','a gap','shortcoming','a shortcoming','weakness','a weakness','deficiency','a deficiency','lack','a lack'],
+  vc2:['nuance','a nuance','subtlety','a subtlety','shade of meaning','a shade of meaning'],
+  vc3:['essential','key','unmissable','must-have','a must','a must-have','must-see','a must-see','crucial','indispensable','vital'],
+  vc4:['outdated','obsolete','old-fashioned','old fashioned','out of date','out-of-date','dated','antiquated']
 };
-function normV(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+var VOCAB_ITEMS=[
+  {id:'va1',fr:'le travail'},{id:'va2',fr:'une maison'},{id:'va3',fr:'le médecin'},{id:'va4',fr:'acheter'},
+  {id:'vb1',fr:'une réunion'},{id:'vb2',fr:'une réclamation'},{id:'vb3',fr:'améliorer'},{id:'vb4',fr:'les ressources humaines'},
+  {id:'vc1',fr:'une lacune'},{id:'vc2',fr:'une nuance'},{id:'vc3',fr:'incontournable'},{id:'vc4',fr:'désuet / obsolète'}
+];
+function normV(s){return String(s).trim().toLowerCase().replace(/[’‘]/g,"'").replace(/[?!.,;:]/g,'').replace(/-/g,' ').replace(/\s+/g,' ');}
+
+/* Marqueurs ✓/✗ pour l'email Formspree */
+function qm(id){var v=getRadioVal(id);if(!v||v==='idk')return '— ';return v===CORRECT_ANSWERS[id]?'✓ ':'✗ ';}
+function vmk(id){var v=normV(getVal(id));if(!v)return '— ';return VOCAB_ANSWERS[id].some(function(a){return normV(a)===v;})?'✓ ':'✗ ';}
+
+/* === CORRECTION DÉTAILLÉE (affichée uniquement APRÈS soumission, score déjà verrouillé) === */
+function buildCorrections(){
+  function qcmRows(data){
+    return data.map(function(q){
+      var chosen=getRadioVal(q.id);
+      var correct=CORRECT_ANSWERS[q.id];
+      var correctTxt='';
+      q.opts.forEach(function(o){if(o.charAt(0)===correct)correctTxt=o;});
+      var row;
+      if(chosen===correct){
+        row='<div style="padding:8px 12px;border-left:3px solid #1F9254;background:#E6F4EC;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#1F9254">✓</strong> '+q.q+'<br><span style="color:#1F9254">Ta réponse : '+correctTxt+'</span></div>';
+      } else if(!chosen||chosen==='idk'){
+        row='<div style="padding:8px 12px;border-left:3px solid #D08A00;background:#FFF8E1;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#D08A00">—</strong> '+q.q+'<br><span style="color:#7A5C00">Non répondu · Bonne réponse : <strong>'+correctTxt+'</strong></span></div>';
+      } else {
+        var chosenTxt='';
+        q.opts.forEach(function(o){if(o.charAt(0)===chosen)chosenTxt=o;});
+        row='<div style="padding:8px 12px;border-left:3px solid #C0392B;background:#FDECEA;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#C0392B">✗</strong> '+q.q+'<br><span style="color:#C0392B">Ta réponse : '+chosenTxt+'</span><br><span style="color:#1F9254">Bonne réponse : <strong>'+correctTxt+'</strong></span></div>';
+      }
+      return row;
+    }).join('');
+  }
+  function vocRows(items){
+    return items.map(function(it){
+      var raw=getVal(it.id),v=normV(raw);
+      var ok=v&&VOCAB_ANSWERS[it.id].some(function(a){return normV(a)===v;});
+      var expected=VOCAB_ANSWERS[it.id][0];
+      if(ok)return '<div style="padding:8px 12px;border-left:3px solid #1F9254;background:#E6F4EC;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#1F9254">✓</strong> '+it.fr+' → <strong>'+raw+'</strong></div>';
+      if(!v)return '<div style="padding:8px 12px;border-left:3px solid #D08A00;background:#FFF8E1;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#D08A00">—</strong> '+it.fr+' · Non répondu · Attendu : <strong>'+expected+'</strong></div>';
+      return '<div style="padding:8px 12px;border-left:3px solid #C0392B;background:#FDECEA;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px"><strong style="color:#C0392B">✗</strong> '+it.fr+' → '+raw+'<br><span style="color:#1F9254">Attendu : <strong>'+expected+'</strong></span></div>';
+    }).join('');
+  }
+  function subTitle(t){return '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);margin:14px 0 8px;padding:5px 10px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 6px 6px 0">'+t+'</div>';}
+  return '<details style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px">'
+    +'<summary style="cursor:pointer;font-size:13px;font-weight:700;color:var(--navy)">📝 Correction détaillée — clique pour dérouler</summary>'
+    +subTitle('§1 Grammaire A1–A2')+qcmRows(qcm1a)
+    +subTitle('§1 Grammaire B1–B2')+qcmRows(qcm1b)
+    +subTitle('§1 Grammaire C1')+qcmRows(qcm1c)
+    +subTitle('§2 Vocabulaire A1–A2')+vocRows(VOCAB_ITEMS.slice(0,4))
+    +subTitle('§2 Vocabulaire B1–B2')+vocRows(VOCAB_ITEMS.slice(4,8))
+    +subTitle('§2 Vocabulaire C1')+vocRows(VOCAB_ITEMS.slice(8,12))
+    +subTitle('§3 Lecture A1–B1')+qcmRows(readA)
+    +subTitle('§3 Lecture B2–C1')+qcmRows(readB)
+    +'<p style="font-size:12px;color:var(--muted);margin-top:8px">§4 Expression : corrigée par ton formateur lors du cours offert.</p>'
+    +'</details>';
+}
 
 function calcScores(){
-  /* Grammaire : 12 QCM = 12 pts max */
+  /* Grammaire : 12 QCM (comparaison stricte data-val === lettre attendue) */
   var gA1A2=0,gB1B2=0,gC1=0;
-  ['g1','g2','g3','g4'].forEach(function(id){if(normV(getRadio(id))===normV(CORRECT_ANSWERS[id]))gA1A2++;});
-  ['g5','g6','g7','g8'].forEach(function(id){if(normV(getRadio(id))===normV(CORRECT_ANSWERS[id]))gB1B2++;});
-  ['g9','g10','g11','g12'].forEach(function(id){if(normV(getRadio(id))===normV(CORRECT_ANSWERS[id]))gC1++;});
+  ['g1','g2','g3','g4'].forEach(function(id){if(getRadioVal(id)===CORRECT_ANSWERS[id])gA1A2++;});
+  ['g5','g6','g7','g8'].forEach(function(id){if(getRadioVal(id)===CORRECT_ANSWERS[id])gB1B2++;});
+  ['g9','g10','g11','g12'].forEach(function(id){if(getRadioVal(id)===CORRECT_ANSWERS[id])gC1++;});
 
-  /* Vocabulaire : 12 inputs = 12 pts max — correction souple */
+  /* Vocabulaire : 12 inputs — correction souple */
   var vA1A2=0,vB1B2=0,vC1=0;
   ['va1','va2','va3','va4'].forEach(function(id){var v=normV(getVal(id));if(v&&VOCAB_ANSWERS[id].some(function(a){return normV(a)===v;}))vA1A2++;});
   ['vb1','vb2','vb3','vb4'].forEach(function(id){var v=normV(getVal(id));if(v&&VOCAB_ANSWERS[id].some(function(a){return normV(a)===v;}))vB1B2++;});
   ['vc1','vc2','vc3','vc4'].forEach(function(id){var v=normV(getVal(id));if(v&&VOCAB_ANSWERS[id].some(function(a){return normV(a)===v;}))vC1++;});
 
-  /* Lecture : 8 QCM = 8 pts max */
+  /* Lecture : 8 QCM */
   var rA=0,rB=0;
-  ['ra1','ra2','ra3','ra4'].forEach(function(id){if(normV(getRadio(id))===normV(CORRECT_ANSWERS[id]))rA++;});
-  ['rb1','rb2','rb3','rb4'].forEach(function(id){if(normV(getRadio(id))===normV(CORRECT_ANSWERS[id]))rB++;});
+  ['ra1','ra2','ra3','ra4'].forEach(function(id){if(getRadioVal(id)===CORRECT_ANSWERS[id])rA++;});
+  ['rb1','rb2','rb3','rb4'].forEach(function(id){if(getRadioVal(id)===CORRECT_ANSWERS[id])rB++;});
 
-  var gramA1A2=gA1A2,gramB1B2=gB1B2,gramC1=gC1;
-  var vocA1A2=vA1A2,vocB1B2=vB1B2,vocC1=vC1;
-  var lecA=rA,lecB=rB;
+  /* === SCORING PAR BLOC DE NIVEAU (manuels CATON) ===
+     Basique  (Manuel Basique 01-09)        : gram A1-A2 + voc A1-A2            = /8
+     Inter    (Manuel Intermédiaire 10-15)  : gram B1-B2 + voc B1-B2 + lect A   = /12
+     Avancé   (Manuel Avancé 16-19)         : gram C1   + voc C1   + lect B     = /12 */
+  var scoreBasique=gA1A2+vA1A2, maxBasique=8;
+  var scoreInter=gB1B2+vB1B2+rA, maxInter=12;
+  var scoreAvance=gC1+vC1+rB,  maxAvance=12;
+  var total=scoreBasique+scoreInter+scoreAvance; /* /32 (hors expression) */
+  var pctBasique=Math.round(scoreBasique/maxBasique*100);
+  var pctInter=Math.round(scoreInter/maxInter*100);
+  var pctAvance=Math.round(scoreAvance/maxAvance*100);
+  var pctGlobal=Math.round(total/32*100);
+  var SEUIL=60;
 
-  /* Scores par palier (sur 8 chacun : 4 gram + 4 voc) */
-  var scoreA1A2=gramA1A2+vocA1A2;   /* /8 */
-  var scoreB1B2=gramB1B2+vocB1B2;   /* /8 */
-  var scoreC1=gramC1+vocC1;         /* /8 */
-  var scoreLecA=lecA;               /* /4 */
-  var scoreLecB=lecB;               /* /4 */
-  var total=scoreA1A2+scoreB1B2+scoreC1+scoreLecA+scoreLecB; /* /32 (hors expression) */
+  /* === ORIENTATION PAR PROFIL — seuil 60 % par bloc, jamais de trou ni de chevauchement ===
+     Bloc Basique <60% -> niveau dans le bloc Basique (A1 si <30%, sinon A2)
+     Basique OK, Inter <60% -> B1 si <30%, sinon B2
+     Basique+Inter OK, Avancé <60% -> B2+ si <30%, sinon C1
+     Tous blocs >=60% -> C1+ (Avancé confirmé / perfectionnement) */
+  var level,levelName,levelColor,levelDesc,formula,formulaDesc,advice,startPoint;
 
-  /* --- LOGIQUE DE NIVEAU --- */
-  /* On regarde jusqu'où l'apprenant "tient" à chaque palier */
-  var level,levelName,levelColor,levelDesc,formula,formulaDesc,advice;
-
-  if(scoreA1A2<=2){
-    level='A1'; levelName='Grand Débutant'; levelColor='#1F7A44';
-    formula='ANG16F'; formulaDesc='Fondamentaux · 16h · A1→A2';
-    levelDesc='Tu poses les premières bases de l\'anglais. Chaque mot compte — et tu es exactement là où il faut commencer.';
-    advice='Focus sur le vocabulaire quotidien, le verbe TO BE et les structures simples.';
-  } else if(scoreA1A2<=5){
-    level='A2'; levelName='Faux Débutant'; levelColor='#1A5FA8';
-    formula='ANG16C'; formulaDesc='Consolidation · 16h · A2→B1';
-    levelDesc='Tu as les bases mais tu manques de régularité et de fluidité. Le vocabulaire courant est acquis en partie.';
-    advice='Consolider le présent simple, les questions et le vocabulaire du quotidien.';
-  } else if(scoreB1B2<=2){
-    level='B1'; levelName='Intermédiaire'; levelColor='#856404';
-    formula='ANG18'; formulaDesc='Intermédiaire · 18h · B1→B2';
-    levelDesc='Tu communiques sur des sujets familiers mais les structures complexes te posent encore problème.';
-    advice='Travailler les temps du passé, le conditionnel et enrichir le vocabulaire professionnel.';
-  } else if(scoreB1B2<=5){
-    level='B2'; levelName='Intermédiaire Avancé'; levelColor='#7A3B00';
-    formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
-    levelDesc='Tu t\'exprimes avec aisance sur la plupart des sujets. Quelques lacunes subsistent sur les structures avancées.';
-    advice='Maîtriser le passif, les subordonnées complexes et développer le vocabulaire académique/professionnel.';
-  } else if(scoreB1B2>=6 && scoreC1>=6){
-    level='C1+'; levelName='Très Avancé / C2'; levelColor='#2D0A4E';
-    formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
-    levelDesc='Niveau exceptionnel. Tu maîtrises l\'anglais à un niveau quasi-natif. Un programme sur-mesure est recommandé.';
-    advice='Programme personnalisé axé sur l\'expression orale avancée et la certification.';
-  } else if(scoreB1B2>=6 && scoreC1>=2 && scoreC1<6){
-    level='C1'; levelName='Avancé'; levelColor='#5B1FA8';
-    formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
-    levelDesc='Excellent niveau ! Tu maîtrises les structures complexes et le vocabulaire avancé. L\'objectif est de parfaire la fluidité et la précision.';
-    advice='Affiner les nuances idiomatiques, l\'inversion et la maîtrise stylistique.';
-  } else if(scoreB1B2>=6 && scoreC1<2){
-    level='B2+'; levelName='Intermédiaire Avancé confirmé'; levelColor='#5A2D00';
-    formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
-    levelDesc='Très bon niveau B2. Tu maîtrises les structures intermédiaires mais les constructions C1 restent à consolider.';
-    advice='Travailler l\'inversion, les relatifs complexes et le vocabulaire académique avancé.';
+  if(pctBasique<SEUIL){
+    if(pctBasique<30){
+      level='A1'; levelName='Grand Débutant'; levelColor='#1F7A44';
+      formula='ANG16F'; formulaDesc='Fondamentaux · 16h · A1→A2';
+      levelDesc='Le niveau Basique est le point de départ idéal pour construire des bases solides. Chaque mot compte — et tu es exactement là où il faut commencer.';
+      advice='Focus sur le vocabulaire quotidien (calendrier, heure, corps humain) et les structures simples.';
+      startPoint='Manuel Basique, Section 01 — The English Alphabet';
+    } else {
+      level='A2'; levelName='Faux Débutant'; levelColor='#1A5FA8';
+      formula='ANG16C'; formulaDesc='Consolidation · 16h · A2→B1';
+      levelDesc='Tu as déjà de bonnes bases — il reste à les consolider pour gagner en régularité et en fluidité. Un excellent tremplin.';
+      advice='Consolider le vocabulaire du quotidien puis aborder les pronoms et les temps.';
+      startPoint='Manuel Basique (révision ciblée), puis Manuel Intermédiaire, Section 10 — Pronouns';
+    }
+  } else if(pctInter<SEUIL){
+    if(pctInter<30){
+      level='B1'; levelName='Intermédiaire'; levelColor='#856404';
+      formula='ANG18'; formulaDesc='Intermédiaire · 18h · B1→B2';
+      levelDesc='Tes bases sont solides — le niveau Intermédiaire est ton terrain de progression naturel pour communiquer avec plus d\'aisance.';
+      advice='Travailler les pronoms, les temps du passé et le conditionnel.';
+      startPoint='Manuel Intermédiaire, Section 10 — Pronouns';
+    } else {
+      level='B2'; levelName='Intermédiaire Avancé'; levelColor='#7A3B00';
+      formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
+      levelDesc='Tu t\'exprimes déjà avec aisance sur la plupart des sujets. Quelques structures intermédiaires restent à affiner — tu es tout près du palier supérieur.';
+      advice='Consolider les verbes modaux et les questions complexes, puis aborder le manuel Avancé.';
+      startPoint='Manuel Intermédiaire, Section 13 — Modal Verbs';
+    }
+  } else if(pctAvance<SEUIL){
+    if(pctAvance<30){
+      level='B2+'; levelName='Intermédiaire Avancé confirmé'; levelColor='#5A2D00';
+      formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
+      levelDesc='Très bon niveau : les blocs Basique et Intermédiaire sont acquis. Le niveau Avancé est ta prochaine étape naturelle.';
+      advice='Aborder le comparatif/superlatif, les prépositions et les mots de liaison.';
+      startPoint='Manuel Avancé, Section 16 — Comparative and Superlative';
+    } else {
+      level='C1'; levelName='Avancé'; levelColor='#5B1FA8';
+      formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
+      levelDesc='Excellent niveau ! Tu maîtrises les structures complexes. L\'objectif est maintenant de parfaire la précision et les nuances.';
+      advice='Affiner les mots de liaison, les nuances idiomatiques et la maîtrise stylistique.';
+      startPoint='Manuel Avancé, Section 18 — Linking Words';
+    }
   } else {
-    level='B2+'; levelName='Intermédiaire Avancé confirmé'; levelColor='#5A2D00';
-    formula='ANG36'; formulaDesc='Avancé · 36h · B2→C1';
-    levelDesc='Très bon niveau B2. Tu maîtrises les structures intermédiaires mais les constructions C1 restent à consolider.';
-    advice='Travailler l\'inversion, les relatifs complexes et le vocabulaire académique avancé.';
+    level='C1+'; levelName='Avancé confirmé / Perfectionnement'; levelColor='#2D0A4E';
+    formula='ANG48'; formulaDesc='Expert · 48h · Tous niveaux · A1→C1';
+    levelDesc='Niveau exceptionnel — tous les blocs sont maîtrisés. Un programme sur-mesure de perfectionnement est recommandé.';
+    advice='Programme personnalisé : expression orale avancée, style et préparation à la certification CLOE.';
+    startPoint='Manuel Avancé, Section 19 — Irregular Verbs + préparation certification';
   }
 
   return {level:level,levelName:levelName,levelColor:levelColor,levelDesc:levelDesc,
-    formula:formula,formulaDesc:formulaDesc,advice:advice,
-    scoreA1A2:scoreA1A2,scoreB1B2:scoreB1B2,scoreC1:scoreC1,
-    scoreLecA:scoreLecA,scoreLecB:scoreLecB,total:total,
-    gramA1A2:gramA1A2,gramB1B2:gramB1B2,gramC1:gramC1,
-    vocA1A2:vocA1A2,vocB1B2:vocB1B2,vocC1:vocC1,
-    lecA:lecA,lecB:lecB};
+    formula:formula,formulaDesc:formulaDesc,advice:advice,startPoint:startPoint,
+    scoreBasique:scoreBasique,maxBasique:maxBasique,pctBasique:pctBasique,
+    scoreInter:scoreInter,maxInter:maxInter,pctInter:pctInter,
+    scoreAvance:scoreAvance,maxAvance:maxAvance,pctAvance:pctAvance,
+    total:total,pctGlobal:pctGlobal,
+    gramA1A2:gA1A2,gramB1B2:gB1B2,gramC1:gC1,
+    vocA1A2:vA1A2,vocB1B2:vB1B2,vocC1:vC1,
+    lecA:rA,lecB:rB};
 }
 
-function buildResultScreen(r,nom){
-  var pct=Math.round(r.total/32*100);
-  var secRows=[
-    {name:'Grammaire A1–A2',val:r.gramA1A2,max:4},
-    {name:'Grammaire B1–B2',val:r.gramB1B2,max:4},
-    {name:'Grammaire C1',val:r.gramC1,max:4},
-    {name:'Vocabulaire A1–A2',val:r.vocA1A2,max:4},
-    {name:'Vocabulaire B1–B2',val:r.vocB1B2,max:4},
-    {name:'Vocabulaire C1',val:r.vocC1,max:4},
-    {name:'Lecture A1–B1',val:r.lecA,max:4},
-    {name:'Lecture B2–C1',val:r.lecB,max:4},
+function buildResultScreen(r,nom,corrHtml){
+  var prenom=String(nom).trim().split(/\s+/)[0]||'toi';
+  var blocRows=[
+    {name:'Bloc Basique (A1–A2)',pct:r.pctBasique},
+    {name:'Bloc Intermédiaire (B1–B2)',pct:r.pctInter},
+    {name:'Bloc Avancé (B2+–C1)',pct:r.pctAvance},
   ];
-  var rowsHtml=secRows.map(function(s){
-    var p=Math.round(s.val/s.max*100);
-    var cls=p>=75?'fill-ok':p>=40?'fill-mid':'fill-ko';
-    return '<div class="sec-row"><span class="sec-row-name">'+s.name+'</span><div class="sec-row-bar"><div class="sec-row-fill '+cls+'" style="width:0%" data-w="'+p+'%"></div></div><span class="sec-row-val">'+s.val+'/'+s.max+'</span></div>';
+  var rowsHtml=blocRows.map(function(s){
+    var cls=s.pct>=60?'fill-ok':s.pct>=30?'fill-mid':'fill-ko';
+    return '<div class="sec-row"><span class="sec-row-name">'+s.name+'</span><div class="sec-row-bar"><div class="sec-row-fill '+cls+'" style="width:0%" data-w="'+s.pct+'%"></div></div><span class="sec-row-val">'+s.pct+'%</span></div>';
   }).join('');
 
   return '<div class="result-screen">'
     +'<div class="result-hero">'
     +'<div class="result-label">Ton niveau estimé · CATON Academy</div>'
-    +'<div class="result-level" style="color:'+r.levelColor+'">'+r.level+'</div>'
+    +'<div class="result-level">'+r.level+'</div>'
     +'<div class="result-level-name">'+r.levelName+'</div>'
-    +'<div class="result-score-ring"><div class="result-score-num">'+r.total+'/32</div><div class="result-score-lbl">Score (hors expression)</div></div>'
+    +'<div class="result-score-ring"><div class="result-score-num">'+r.pctGlobal+'%</div><div class="result-score-lbl">Score global (hors expression)</div></div>'
     +'</div>'
-    +'<div class="result-note">📌 <strong>Note :</strong> Ce résultat est une estimation automatique basée sur les QCM et le vocabulaire. Lenny confirmera ou affinera ce niveau lors du cours offert en tenant compte de ton expression écrite et orale.</div>'
+    +'<div class="result-note">📌 <strong>Bravo '+prenom+' !</strong> Ce résultat est une estimation automatique. Lenny confirmera ou affinera ce niveau lors du cours offert, en tenant compte de ton expression écrite et orale. Un test de positionnement ne se repasse pas — ton profil est déjà très parlant.</div>'
+    +'<div class="result-section-scores"><div class="result-section-title">Ton profil par bloc</div>'
+    +rowsHtml+'</div>'
     +'<div class="result-cards">'
-    +'<div class="result-card"><div class="result-card-title">📊 Profil</div><p>'+r.levelDesc+'</p></div>'
+    +'<div class="result-card" style="border-left:4px solid '+r.levelColor+'"><div class="result-card-title">📊 Profil</div><p>'+r.levelDesc+'</p></div>'
     +'<div class="result-card"><div class="result-card-title">🎯 Axe de travail</div><p>'+r.advice+'</p></div>'
     +'</div>'
-    +'<div class="result-formula"><div class="result-formula-badge">'+r.formula+'</div><div class="result-formula-text"><strong style="color:var(--gold-light)">Formule recommandée :</strong><br>'+r.formulaDesc+'</div></div>'
-    +'<div class="result-section-scores"><div class="result-section-title">Détail par section</div>'
-    +rowsHtml+'</div>'
-    +'<p style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px">✅ Résultats envoyés à CATON Academy · Lenny te contactera sous 24h.</p>'
+    +'<div class="result-formula"><div class="result-formula-badge">'+r.formula+'</div><div class="result-formula-text"><strong style="color:var(--gold-light)">Formule recommandée :</strong><br>'+r.formulaDesc+'<br><span style="font-size:12px;color:rgba(255,255,255,.65)">📖 Point de départ conseillé : '+r.startPoint+'</span></div></div>'
+    +(corrHtml||'')
+    +'<p id="sendStatus" style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px">⏳ Envoi des résultats à CATON Academy…</p>'
     +'</div>';
 }
 
@@ -567,9 +647,8 @@ function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
   var email=getVal('id-email');
-  if(!email){alert('Merci de saisir ton adresse email.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
+  if(!email||email.indexOf('@')===-1){alert('Merci de saisir une adresse email valide (avec @).');goSec(0);return;}
+  var dureeMin=startTime?Math.max(1,Math.round((Date.now()-startTime)/60000)):0;
   var r=calcScores();
 
   var lines=[
@@ -579,58 +658,60 @@ function submitTest(){
     'Date : '+getVal('id-date'),
     'Niveau auto-estimé : '+getVal('id-niveau'),
     'Objectif : '+getVal('id-objectif'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s',
+    'Durée : '+dureeMin+' min',
     '',
-    '>>> NIVEAU CALCULÉ : '+r.level+' — '+r.levelName+' ('+r.total+'/32)',
+    '>>> NIVEAU RECOMMANDÉ : '+r.level+' — '+r.levelName+' ('+r.total+'/32 · '+r.pctGlobal+'%)',
+    '>>> PROFIL PAR BLOC : Basique '+r.pctBasique+'% ('+r.scoreBasique+'/'+r.maxBasique+') · Intermédiaire '+r.pctInter+'% ('+r.scoreInter+'/'+r.maxInter+') · Avancé '+r.pctAvance+'% ('+r.scoreAvance+'/'+r.maxAvance+')',
     '>>> FORMULE RECOMMANDÉE : '+r.formula+' · '+r.formulaDesc,
+    '>>> POINT DE DÉPART : '+r.startPoint,
     '',
     '--- §1 GRAMMAIRE A1–A2 ('+r.gramA1A2+'/4) ---',
-    'G1 (présent) : '+getRadio('g1'),
-    'G2 (past continuous) : '+getRadio('g2'),
-    'G3 (there is/are) : '+getRadio('g3'),
-    'G4 (there was/were) : '+getRadio('g4'),
+    'G1 (présent) : '+qm('g1')+getRadio('g1'),
+    'G2 (past continuous) : '+qm('g2')+getRadio('g2'),
+    'G3 (there is/are) : '+qm('g3')+getRadio('g3'),
+    'G4 (there was/were) : '+qm('g4')+getRadio('g4'),
     '',
     '--- §1 GRAMMAIRE B1–B2 ('+r.gramB1B2+'/4) ---',
-    'G5 (conditionnel) : '+getRadio('g5'),
-    'G6 (present perfect durée) : '+getRadio('g6'),
-    'G7 (passif) : '+getRadio('g7'),
-    'G8 (wish) : '+getRadio('g8'),
+    'G5 (conditionnel) : '+qm('g5')+getRadio('g5'),
+    'G6 (present perfect durée) : '+qm('g6')+getRadio('g6'),
+    'G7 (passif) : '+qm('g7')+getRadio('g7'),
+    'G8 (wish) : '+qm('g8')+getRadio('g8'),
     '',
     '--- §1 GRAMMAIRE C1 ('+r.gramC1+'/4) ---',
-    'G9 (inversion) : '+getRadio('g9'),
-    'G10 (relatif) : '+getRadio('g10'),
-    'G11 (inversion cond.) : '+getRadio('g11'),
-    'G12 (connecteur) : '+getRadio('g12'),
+    'G9 (inversion) : '+qm('g9')+getRadio('g9'),
+    'G10 (relatif) : '+qm('g10')+getRadio('g10'),
+    'G11 (inversion cond.) : '+qm('g11')+getRadio('g11'),
+    'G12 (connecteur) : '+qm('g12')+getRadio('g12'),
     '',
     '--- §2 VOCABULAIRE A1–A2 ('+r.vocA1A2+'/4) ---',
-    'le travail : '+getVal('va1'),
-    'une maison : '+getVal('va2'),
-    'le médecin : '+getVal('va3'),
-    'acheter : '+getVal('va4'),
+    'le travail : '+vmk('va1')+getVal('va1'),
+    'une maison : '+vmk('va2')+getVal('va2'),
+    'le médecin : '+vmk('va3')+getVal('va3'),
+    'acheter : '+vmk('va4')+getVal('va4'),
     '',
     '--- §2 VOCABULAIRE B1–B2 ('+r.vocB1B2+'/4) ---',
-    'une réunion : '+getVal('vb1'),
-    'une réclamation : '+getVal('vb2'),
-    'améliorer : '+getVal('vb3'),
-    'les ressources humaines : '+getVal('vb4'),
+    'une réunion : '+vmk('vb1')+getVal('vb1'),
+    'une réclamation : '+vmk('vb2')+getVal('vb2'),
+    'améliorer : '+vmk('vb3')+getVal('vb3'),
+    'les ressources humaines : '+vmk('vb4')+getVal('vb4'),
     '',
     '--- §2 VOCABULAIRE C1 ('+r.vocC1+'/4) ---',
-    'une lacune : '+getVal('vc1'),
-    'une nuance : '+getVal('vc2'),
-    'incontournable : '+getVal('vc3'),
-    'désuet / obsolète : '+getVal('vc4'),
+    'une lacune : '+vmk('vc1')+getVal('vc1'),
+    'une nuance : '+vmk('vc2')+getVal('vc2'),
+    'incontournable : '+vmk('vc3')+getVal('vc3'),
+    'désuet / obsolète : '+vmk('vc4')+getVal('vc4'),
     '',
     '--- §3 LECTURE A1–B1 ('+r.lecA+'/4) ---',
-    'R-A1 : '+getRadio('ra1'),
-    'R-A2 : '+getRadio('ra2'),
-    'R-A3 : '+getRadio('ra3'),
-    'R-A4 : '+getRadio('ra4'),
+    'R-A1 : '+qm('ra1')+getRadio('ra1'),
+    'R-A2 : '+qm('ra2')+getRadio('ra2'),
+    'R-A3 : '+qm('ra3')+getRadio('ra3'),
+    'R-A4 : '+qm('ra4')+getRadio('ra4'),
     '',
     '--- §3 LECTURE B2–C1 ('+r.lecB+'/4) ---',
-    'R-B1 : '+getRadio('rb1'),
-    'R-B2 : '+getRadio('rb2'),
-    'R-B3 : '+getRadio('rb3'),
-    'R-B4 : '+getRadio('rb4'),
+    'R-B1 : '+qm('rb1')+getRadio('rb1'),
+    'R-B2 : '+qm('rb2')+getRadio('rb2'),
+    'R-B3 : '+qm('rb3')+getRadio('rb3'),
+    'R-B4 : '+qm('rb4')+getRadio('rb4'),
     '',
     '--- §4 EXPRESSION (correction formateur) ---',
     'Présentation : '+getVal('ex1'),
@@ -638,140 +719,65 @@ function submitTest(){
     'Défi (B2–C1) : '+getVal('ex3'),
   ];
 
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
+  /* Correction détaillée calculée AVANT le remplacement du DOM (les réponses sont lues dans la page) */
+  var corrHtml=buildCorrections();
+  /* Affiche le résultat immédiatement, l'envoi se fait en arrière-plan (#sendStatus) */
+  document.querySelector('main').innerHTML=buildResultScreen(r,nom,corrHtml);
+  setTimeout(function(){document.querySelectorAll('[data-w]').forEach(function(el){el.style.width=el.dataset.w;});},100);
+
+  /* Sauvegarde localStorage (une seule passation) */
+  try{
+    localStorage.setItem('caton_positionnement',JSON.stringify({
+      nom:nom,email:email,pctGlobal:r.pctGlobal,
+      profil:{basique:r.pctBasique,inter:r.pctInter,avance:r.pctAvance},
+      niveau:r.level,formule:r.formula,
+      date:new Date().toLocaleDateString('fr-FR'),duree:dureeMin
+    }));
+  }catch(e){}
+
+  function setStatus(txt,color){var s=document.getElementById('sendStatus');if(s){s.textContent=txt;if(color)s.style.color=color;}}
 
   fetch('https://formspree.io/f/mlgadonn',{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({subject:'[POSITIONNEMENT] '+r.level+' — '+nom+' — '+new Date().toLocaleDateString('fr-FR'),message:lines.join('\n')})
+    body:JSON.stringify({
+      subject:'[POSITIONNEMENT] '+r.level+' — '+nom+' — '+new Date().toLocaleDateString('fr-FR'),
+      nom:nom,
+      email:email,
+      section:'Test de positionnement | CATON Academy',
+      score_global:r.total+'/32 ('+r.pctGlobal+'%)',
+      score_basique:r.scoreBasique+'/'+r.maxBasique+' ('+r.pctBasique+'%)',
+      score_inter:r.scoreInter+'/'+r.maxInter+' ('+r.pctInter+'%)',
+      score_avance:r.scoreAvance+'/'+r.maxAvance+' ('+r.pctAvance+'%)',
+      niveau_recommande:r.level+' — '+r.levelName,
+      formule_recommandee:r.formula,
+      duree_minutes:dureeMin,
+      message:lines.join('\n')
+    })
   }).then(function(resp){
-    var html=buildResultScreen(r,nom);
-    document.querySelector('main').innerHTML=html;
-    /* Animate bars */
-    setTimeout(function(){
-      document.querySelectorAll('.sec-row-fill,.ca-sfill').forEach(function(el){
-        el.style.width=el.dataset.w||el.style.width;
-      });
-      document.querySelectorAll('[data-w]').forEach(function(el){el.style.width=el.dataset.w;});
-    },100);
-    if(!resp.ok){
-      var note=document.createElement('p');
-      note.style.cssText='text-align:center;font-size:12px;color:#C0392B;margin-top:8px';
-      note.textContent='⚠️ L\'envoi a échoué — note ton niveau et contacte lenny@catonacademy.com';
-      document.querySelector('.result-screen').appendChild(note);
-    }
+    if(resp.ok){setStatus('✓ Résultats transmis à CATON Academy · Lenny te contactera sous 24h.','#1F9254');}
+    else{setStatus('⚠ Résultats non transmis — note ton niveau et contacte lenny@catonacademy.com','#C0392B');}
   }).catch(function(){
-    var html=buildResultScreen(r,nom);
-    document.querySelector('main').innerHTML=html;
-    setTimeout(function(){document.querySelectorAll('[data-w]').forEach(function(el){el.style.width=el.dataset.w;});},100);
-    var note=document.createElement('p');
-    note.style.cssText='text-align:center;font-size:12px;color:#C0392B;margin-top:8px';
-    note.textContent='⚠️ Erreur réseau — note ton niveau et contacte lenny@catonacademy.com';
-    document.querySelector('.result-screen').appendChild(note);
+    setStatus('⚠ Erreur réseau — note ton niveau et contacte lenny@catonacademy.com','#C0392B');
   });
 }
 
-/* === CATON ENGINE — correction instantanée === */
+/* === MODULE LOCALSTORAGE — pré-remplissage + bandeau si test déjà passé === */
 (function(){
-var A={
-  g1:'B — goes',g2:'C — was watching',g3:'C — There is',g4:'D — were',
-  g5:'B — had',g6:'C — has worked',g7:'D — had been / finished',g8:'C — had studied',
-  g9:'B — did they deliver',g10:'C — to which',g11:'C — Had',g12:'A — yet',
-  ra1:"B — Nine o'clock",ra2:'C — The commute',ra3:'C — On Fridays',ra4:'B — Move closer to the office',
-  rb1:"C — It may weaken corporate culture",rb2:'B — Practical and realistic',rb3:'C — Clear communication and accountability must be established',rb4:'B — Suppress / hinder',
-  va1:null,va2:null,va3:null,va4:null,
-  vb1:null,vb2:null,vb3:null,vb4:null,
-  vc1:null,vc2:null,vc3:null,vc4:null,
-  ex1:null,ex2:null,ex3:null
-};
-/* Réponses vocab acceptées */
-var vocab={
-  va1:['work','job'],va2:['a house','house'],va3:['doctor','a doctor','physician','a physician'],va4:['buy','to buy','purchase','to purchase'],
-  vb1:['meeting','a meeting'],vb2:['complaint','a complaint'],vb3:['improve','to improve','enhance','to enhance'],vb4:['human resources','the human resources','hr','the hr','human resource','the human resource'],
-  vc1:['gap','shortcoming','a gap','weakness','a weakness','deficiency','a deficiency'],vc2:['nuance','a nuance'],vc3:['essential','key','unmissable','must-have','a must'],vc4:['outdated','obsolete','old-fashioned']
-};
-var pts=0,tot=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){
-  if(vocab[id]){var n=norm(v);return vocab[id].some(function(x){return norm(x)===n;});}
-  var a=A[id];if(a===null){return null;}
-  return norm(a)===norm(v);
-}
-function exp(id){
-  if(vocab[id]){return vocab[id][0];}
-  var a=A[id];if(!a)return'?';return a;
-}
-
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}upScore();}
-      });
-    });
-  });
-}
-
-function bindInputs(){
-  document.querySelectorAll('input.n-input').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-email'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null||vocab[inp.id]){tot++;upScore();}
-    inp.addEventListener('blur',function(){
-      if(!inp.value.trim()||inp.dataset.done)return;
-      inp.dataset.done='1';
-      var ans=A[inp.id];
-      if(ans===null&&!vocab[inp.id]){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-      var r=ok(inp.id,inp.value);
-      inp.classList.remove('inp-ok','inp-ko');
-      if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-      else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(inp.id)+'</strong>');}
-      upScore();
-    });
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-}
-
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
+  try{
+    var raw=localStorage.getItem('caton_positionnement');
+    if(!raw)return;
+    var d=JSON.parse(raw);
+    var b=document.getElementById('revisionBanner');
+    if(b&&d.date&&d.niveau){
+      b.innerHTML='📖 <strong>Test déjà passé le '+d.date+'</strong> — niveau recommandé : <strong>'+d.niveau+'</strong>'+(d.formule?' ('+d.formule+')':'')+'. Un positionnement ne se repasse pas : contacte ton formateur si tu as une question sur ton niveau.';
+      b.style.display='block';
+    }
+    if(d.nom){var n=document.getElementById('id-nom');if(n&&!n.value)n.value=d.nom;}
+    if(d.email){var e=document.getElementById('id-email');if(e&&!e.value)e.value=d.email;}
+  }catch(e){}
 })();
+
 </script>
 </body>
 </html>
