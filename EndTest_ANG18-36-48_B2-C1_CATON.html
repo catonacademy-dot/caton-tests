@@ -227,7 +227,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div class="id-block"><label>Date du test *</label><input class="n-input" id="id-date" type="date" required></div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : MANUEL -->
@@ -304,7 +304,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="section-header">
       <span class="section-badge">SECTION 1</span>
       <span class="section-title">Production écrite — Rapport analytique</span>
-      <span class="section-pts">20 pts · 30 min</span>
+      <span class="section-pts">16 pts · 30 min</span>
     </div>
     <div class="callout">ℹ <strong>Contexte :</strong> Sondage interne "Preferred Workplace Benefits 2025" — 200 employés d'une entreprise de services (secteur conseil), répartis sur 3 sites en Europe.</div>
     <div class="passage" style="margin-bottom:14px">
@@ -344,16 +344,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="section-header">
       <span class="section-badge">SECTION 2</span>
       <span class="section-title">Langue en contexte</span>
-      <span class="section-pts">15 pts · 18 min</span>
+      <span class="section-pts">19 pts · 18 min</span>
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2A · QCM lacunaire</div>
+      <div class="sub-label">2A · QCM lacunaire (6 pts)</div>
       <div id="qcm2a"></div>
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2B · Texte à trous</div>
+      <div class="sub-label">2B · Texte à trous (6 pts)</div>
       <p class="instruction">Lis le texte ci-dessous. Trouve le mot manquant pour chacune des 6 lacunes numérotées (un seul mot par lacune).</p>
       <div class="passage"><h4>Micro-learning</h4>
         <p>Micro-learning — short bursts of focused study — is popular among busy professionals, <strong>1___</strong> value learning on the go. Lessons rarely exceed five minutes, <strong>2___</strong> they can still cover a single grammar point effectively. Teachers recommend daily micro-sessions <strong>3___</strong> spaced repetition matters more than lesson length. Learners should set a clear goal, <strong>4___</strong> as improving presentation skills, to stay motivated. Progress is <strong>5___</strong> noticeable at first, but confidence grows once habits form. Remember: you will not improve <strong>6___</strong> you practise consistently.</p>
@@ -369,12 +369,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2C · Collocations</div>
+      <div class="sub-label">2C · Collocations (4 pts)</div>
       <div id="coll2c"></div>
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2D · Transformations avec mot-clé</div>
+      <div class="sub-label">2D · Transformations avec mot-clé (3 pts)</div>
       <p class="instruction">Réécris chaque phrase en utilisant le mot-clé entre parenthèses. Utilise 2 à 5 mots au total, sans modifier le sens de la phrase d'origine.</p>
       <div class="q-block"><div class="q-num">1 — mot-clé : <strong>NEEDN'T</strong></div><div class="q-text" style="color:#7A7567;font-style:italic;margin-bottom:6px">It was not necessary to book tickets in advance.</div><div class="q-text">You _______ tickets in advance.</div><input class="n-input" id="kw1" placeholder="You needn't …"></div>
       <div class="q-block" style="margin-top:8px"><div class="q-num">2 — mot-clé : <strong>WOULD</strong></div><div class="q-text" style="color:#7A7567;font-style:italic;margin-bottom:6px">He told me: "I will send you the file later."</div><div class="q-text">He said _______ the file later.</div><input class="n-input" id="kw2" placeholder="He said he would …"></div>
@@ -481,6 +481,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div style="margin-top:28px">
       <button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom et tes scores sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique.</p>
     </div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(5)">← Retour</button><div></div></div>
@@ -489,12 +490,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=5400,rem=5400,tInt;
+var cur=0,total=5400,rem=5400,tInt=null,testStarted=false,startAt=null;
+var LS_KEY='caton_test_end_ang18_36_48';
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
-startTimer();
-
+function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}var t=document.getElementById('timer');if(t)t.textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);var f=document.getElementById('timer-fill');if(f)f.style.width=Math.round(rem/total*100)+'%';},1000);}
+function startTest(){
+  if(!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  goSec(1);
+}
 function goSec(n){
+  if(n>0&&!testStarted){testStarted=true;startAt=Date.now();startTimer();}
   document.getElementById('sec'+cur).classList.remove('active');
   document.getElementById('sec'+n).classList.add('active');
   var tabs=document.querySelectorAll('.pnav-item');
@@ -502,7 +507,6 @@ function goSec(n){
   tabs[n].classList.add('active');tabs[n].classList.remove('done');
   cur=n;window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function countW(){
   var t=document.getElementById('rapport').value.trim();
   var n=t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;
@@ -510,6 +514,7 @@ function countW(){
   el.textContent=n+' mots · cible : 220–260';
   el.className='wc-bar'+(n>=220&&n<=260?' wc-ok':'');
 }
+function wordCount(t){t=String(t||'').trim();return t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;}
 
 var qcmData=[
   {id:'q1',q:'Many commuters decide to ___ to rural towns.',opts:['A — switch','B — migrate','C — transfer','D — shift']},
@@ -519,26 +524,12 @@ var qcmData=[
   {id:'q5',q:'Our team succeeded ___ spite of limited resources.',opts:['A — in','B — on','C — despite','D — of']},
   {id:'q6',q:'After a long debate, they decided to ___ the project.',opts:['A — call off','B — call out','C — call up','D — call in']},
 ];
-var q2aDiv=document.getElementById('qcm2a');
-qcmData.forEach(function(q,i){
-  var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';q2aDiv.innerHTML+=h;
-});
-
 var collData=[
   {id:'c1',q:'1. ___ a decision',opts:['make','take','do']},
-  {id:'c2',q:'2. heavy ___',opts:['rain','wind','fog']},
+  {id:'c2',q:'2. heavy ___',opts:['rain','wind','sun']},
   {id:'c3',q:'3. keen ___ details',opts:['on','of','about']},
   {id:'c4',q:'4. set ___',opts:['targets','aims','purposes']},
 ];
-var c2cDiv=document.getElementById('coll2c');
-collData.forEach(function(c){
-  var h='<div class="q-block"><div class="q-text">'+c.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
-  c.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+c.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';c2cDiv.innerHTML+=h;
-});
-
 var r1Data=[
   {id:'r1',q:'1. The main purpose of paragraph 2 is to…',opts:['A — provide a neurological explanation','B — describe the Edinburgh method','C — summarise critics\' arguments','D — introduce the Barcelona study']},
   {id:'r2',q:'2. According to Dr Li Ming, the hippocampus in bilingual adults…',opts:['A — shrinks faster','B — resembles monolinguals ten years younger','C — is identical in both groups','D — continuously enlarges']},
@@ -546,13 +537,6 @@ var r1Data=[
   {id:'r4',q:'4. Which factor does the author say still needs more research?',opts:['A — dietary habits','B — lifestyle / social activity','C — genetic predisposition','D — study costs']},
   {id:'r5',q:'5. What is the writer\'s overall stance?',opts:['A — fully convinced','B — cautiously optimistic','C — neutral','D — sceptical']},
 ];
-var r1Div=document.getElementById('read1mcq');
-r1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';r1Div.innerHTML+=h;
-});
-
 var stmts=[
   '6. Claims governments should use fiscal policy to keep city centres alive.',
   '7. Predicts a four-day working week will be the norm by 2030.',
@@ -560,13 +544,6 @@ var stmts=[
   '9. Suggests cafés and bookshops depend on office lunch crowds.',
   '10. Says convincing senior managers is the main cultural barrier.',
 ];
-var r2Div=document.getElementById('read2match');
-stmts.forEach(function(s,i){
-  var h='<div class="q-block"><div class="q-text">'+s+'</div><div class="radio-list" style="flex-direction:row;gap:6px">';
-  ['A','B','C'].forEach(function(l){h+='<label class="r-opt"><input type="radio" name="r2s'+(i+6)+'" value="'+l+'"> Writer '+l+'</label>';});
-  h+='</div></div>';r2Div.innerHTML+=h;
-});
-
 var l1Data=[
   {id:'l1',q:'1. Daily interaction with colleagues from how many countries raises problem-solving by 18%?',opts:['A — Two','B — Three','C — Four','D — Five']},
   {id:'l2',q:'2. Which pillar of cultural intelligence involves pausing before reacting?',opts:['A — Knowledge','B — Mindfulness','C — Behavioural skills','D — Empathy']},
@@ -574,206 +551,275 @@ var l1Data=[
   {id:'l4',q:'4. What simple action reduces conflict by a third?',opts:['A — Weekly retreats','B — Monthly 15-min video coffee','C — Daily stand-up meetings','D — Quarterly summits']},
   {id:'l5',q:'5. When contact is limited to weekly meetings, the 18% advantage drops to…',opts:['A — 16%','B — 12%','C — 6%','D — 2%']},
 ];
-var l1Div=document.getElementById('listen1mcq');
-l1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';l1Div.innerHTML+=h;
-});
-
-document.querySelectorAll('.r-opt').forEach(function(lbl){
-  lbl.addEventListener('click',function(){
-    var name=lbl.querySelector('input').name;
-    document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
-    lbl.classList.add('selected');
-  });
-});
 
 function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
+/* ══ CATON ENGINE v2 — correction post-soumission uniquement ══ */
+function normA(s){return String(s).trim().toLowerCase().replace(/\u2019/g,"'").replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+
+/* answerKey unique — reconstruit depuis le contenu REEL du test (l'ancienne cle v7 provenait d'une autre version) */
+var answerKey={
+  mma1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 1 · BUSY',a:['busiest']},
+  mma2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 2 · SHORT',a:['shorter']},
+  mma3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 3 · FAST',a:['fastest']},
+  mma4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 4 · CHALLENGING',a:['more challenging']},
+  mmb1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 1',a:['but']},
+  mmb2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 2',a:['however']},
+  mmb3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 3',a:['despite']},
+  mmb4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 4',a:['or']},
+  mmc:{cat:'semi',blk:'manuel',pts:5,lbl:'MM-C · Correction de temps (5 erreurs)',forms:[
+    {name:'was arriving -> arrived',re:/\barrived\b/i},
+    {name:'remember -> remembered',re:/\bremembered\b/i},
+    {name:'forgot -> had forgotten',re:/\bhad forgotten\b/i},
+    {name:'run -> ran',re:/\bran\b/i},
+    {name:'catch -> caught',re:/\bcaught\b/i}
+  ]},
+  mmd1a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D bend · prétérit',a:['bent']},
+  mmd1b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D bend · participe passé',a:['bent']},
+  mmd2a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D rise · prétérit',a:['rose']},
+  mmd2b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D rise · participe passé',a:['risen']},
+  mmd3a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D sweep · prétérit',a:['swept']},
+  mmd3b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D sweep · participe passé',a:['swept']},
+  mmd4a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D seek · prétérit',a:['sought']},
+  mmd4b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D seek · participe passé',a:['sought']},
+  mme1:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 1 · CAN\u2019T',forms:[{name:'She can\u2019t be at home',re:/\bcan'?t be\b[\s\S]*\bhome\b|\bcannot be\b[\s\S]*\bhome\b/i}]},
+  mme2:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 2 · MIGHT',forms:[{name:'They might have taken the wrong train',re:/\bmight have taken\b/i}]},
+  mme3:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 3 · NEEDN\u2019T',forms:[{name:'You needn\u2019t have printed the report',re:/\bneed\s?not have printed\b|\bneedn'?t have printed\b/i}]},
+  mme4:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 4 · HAVE TO',forms:[{name:'We have to change (our) passwords monthly',re:/\bhave to change\b[\s\S]*\bpasswords?\b/i}]},
+  mmf1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-F 1 · CONVINCE',a:['convincing']},
+  mmf2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-F 2 · RELY',a:['reliable']},
+  mmf3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-F 3 · BROAD',a:['breadth']},
+  mmf4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-F 4 · ACCESS',a:['accessibility']},
+  q1:{cat:'auto',blk:'langue',pts:1,lbl:'2A-1',a:['B — migrate'],radio:true},
+  q2:{cat:'auto',blk:'langue',pts:1,lbl:'2A-2',a:['A — into'],radio:true},
+  q3:{cat:'auto',blk:'langue',pts:1,lbl:'2A-3',a:['C — for'],radio:true},
+  q4:{cat:'auto',blk:'langue',pts:1,lbl:'2A-4',a:['B — owing to'],radio:true},
+  q5:{cat:'auto',blk:'langue',pts:1,lbl:'2A-5',a:['A — in'],radio:true},
+  q6:{cat:'auto',blk:'langue',pts:1,lbl:'2A-6',a:['A — call off'],radio:true},
+  ob1:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 1',a:['who']},
+  ob2:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 2',a:['yet','but']},
+  ob3:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 3',a:['because','as','since']},
+  ob4:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 4',a:['such']},
+  ob5:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 5',a:['barely','hardly','scarcely']},
+  ob6:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 6',a:['unless']},
+  c1:{cat:'auto',blk:'langue',pts:1,lbl:'2C-1 · ___ a decision',a:['make','take'],radio:true},
+  c2:{cat:'auto',blk:'langue',pts:1,lbl:'2C-2 · heavy ___',a:['rain'],radio:true},
+  c3:{cat:'auto',blk:'langue',pts:1,lbl:'2C-3 · keen ___ details',a:['on'],radio:true},
+  c4:{cat:'auto',blk:'langue',pts:1,lbl:'2C-4 · set ___',a:['targets'],radio:true},
+  kw1:{cat:'semi',blk:'langue',pts:1,lbl:'2D-1 · NEEDN\u2019T',forms:[{name:'needn\u2019t have booked',re:/\bneed\s?not have booked\b|\bneedn'?t have booked\b/i}]},
+  kw2:{cat:'semi',blk:'langue',pts:1,lbl:'2D-2 · WOULD',forms:[{name:'(that) he would send me',re:/\bhe\s*('d|would)\s+send\b/i}]},
+  kw3:{cat:'semi',blk:'langue',pts:1,lbl:'2D-3 · FOR',forms:[{name:'have worked / have been working here for',re:/\b(have|'ve)\s+(been working|worked)\s+here for\b/i}]},
+  r1:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T1 Q1',a:['A — provide a neurological explanation'],radio:true},
+  r2:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T1 Q2',a:['B — resembles monolinguals ten years younger'],radio:true},
+  r3:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T1 Q3',a:['B — have younger-looking brain structures'],radio:true},
+  r4:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T1 Q4',a:['B — lifestyle / social activity'],radio:true},
+  r5:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T1 Q5',a:['B — cautiously optimistic'],radio:true},
+  r2s6:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T2 Aff.6',a:['A'],radio:true},
+  r2s7:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T2 Aff.7',a:['B'],radio:true},
+  r2s8:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T2 Aff.8',a:['C'],radio:true},
+  r2s9:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T2 Aff.9',a:['A'],radio:true},
+  r2s10:{cat:'auto',blk:'lecture',pts:1.5,lbl:'Lecture T2 Aff.10',a:['C'],radio:true}
+};
+var BLOCKS=[
+  {id:'manuel',name:'§0 Manuel Avancé',max:25},
+  {id:'langue',name:'§2 Langue',max:19},
+  {id:'lecture',name:'§3 Lecture',max:15}
+];
+var AUTO_MAX=59;
+
+/* Table bloc -> sections reelles du manuel (referentiel valide vs Notion lors des audits de la serie) */
+var RECO={
+  manuel:'Manuel Avancé — Section 16 (Comparative and Superlative), Section 18 (Linking Words) et les verbes irréguliers · Manuel Intermédiaire — Section 13 (Modal Verbs) pour les reformulations',
+  langue:'Manuel Avancé — Section 18 (Linking Words) et les prépositions · Manuel Intermédiaire — Section 11 (Tenses) pour le discours rapporté et le present perfect',
+  lecture:'les textes argumentatifs du Manuel Avancé, en lecture guidée avec ton formateur (repérage des points de vue et de la position de l\u2019auteur)'
+};
+
+function gradeItem(id,getV,getR){
+  var it=answerKey[id];
+  if(it.cat==='auto'){
+    var v=it.radio?getR(id):getV(id);
+    if(!v)return{got:0,mark:'✗',user:'(vide)',expl:'Attendu : '+it.a[0]};
+    var okk=it.a.some(function(x){return normA(x)===normA(v);});
+    return{got:okk?it.pts:0,mark:okk?'✓':'✗',user:v,expl:okk?'':'Attendu : '+it.a[0]};
+  }
+  var t=getV(id),n=it.forms.length,hit=0,miss=[];
+  it.forms.forEach(function(f){if(f.re.test(t)){hit++;}else{miss.push(f.name);}});
+  var got=Math.round(it.pts*hit/n*2)/2;
+  return{got:got,mark:hit===n?'✓':(hit>0?'~':'✗'),user:t||'(vide)',semi:true,
+    expl:hit+'/'+n+' forme(s) détectée(s)'+(miss.length?' — attendu : '+miss.join(' · '):'')+' — à valider par le formateur'};
+}
+function gradeAll(getV,getR){
+  var scores={},marks={};
+  BLOCKS.forEach(function(b){scores[b.id]={got:0,max:b.max,name:b.name};});
+  var sumMax=0;
+  Object.keys(answerKey).forEach(function(id){
+    var it=answerKey[id],g=gradeItem(id,getV,getR);
+    scores[it.blk].got+=g.got;sumMax+=it.pts;marks[id]=g;
+  });
+  if(Math.abs(sumMax-AUTO_MAX)>0.001)throw new Error('answerKey/AUTO_MAX mismatch: '+sumMax);
+  var pts=BLOCKS.reduce(function(a,b){return a+scores[b.id].got;},0);
+  BLOCKS.forEach(function(b){scores[b.id].got=Math.round(scores[b.id].got*2)/2;});
+  return{scores:scores,pts:Math.round(pts*2)/2,pct:Math.round(pts/AUTO_MAX*100),marks:marks};
+}
+
+/* buildFeedback v2 — définie 1 seule fois */
+function buildFeedback(scores,pct,name){
+  var h='',weak=[];
+  BLOCKS.forEach(function(b){var s=scores[b.id];if(s.got/s.max<0.6)weak.push(b.id);});
+  var weakNames=weak.map(function(w){return scores[w].name;}).join(', ');
+  if(pct>=85){
+    h+='<p>🌟 <strong>Félicitations '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu maîtrises solidement le programme B2→C1. <strong>Objectif C1 atteint</strong> (sous réserve de la partie Expression) — tu es prêt(e) pour la <strong>certification CLOE</strong>.</p>';
+  }else if(pct>=65){
+    h+='<p>👏 <strong>Bravo '+name+' !</strong> Avec <strong>'+pct+'%</strong>, l\u2019objectif C1 est atteint. Une consolidation est conseillée avant la certification CLOE'+(weak.length?', en particulier sur '+weakNames:'')+'.</p>';
+  }else if(pct>=40){
+    h+='<p>💪 <strong>'+name+'</strong>, ton score partiel de <strong>'+pct+'%</strong> est un vrai point d\u2019appui. Une révision ciblée est recommandée avant d\u2019envisager la certification'+(weak.length?', sur '+weakNames:'')+'.</p>';
+  }else{
+    h+='<p>🤝 <strong>'+name+'</strong>, ce test sert exactement à ça : repérer ce qu\u2019il reste à consolider ('+pct+'% en correction automatique). On planifie ensemble une <strong>session de révision avec ton formateur</strong> avant d\u2019envisager la certification.</p>';
+  }
+  h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">Détail par bloc :</div>';
+  BLOCKS.forEach(function(b){
+    var s=scores[b.id],p=Math.round(s.got/s.max*100),low=p<60;
+    h+='<div style="margin:4px 0">'+(low?'🔶':'🔹')+' '+s.name+' : <strong>'+s.got+'/'+s.max+'</strong> ('+p+'%)'+(low?' — bloc à renforcer':'')+'</div>';
+  });
+  if(weak.length){
+    h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">📚 À revoir en priorité :</div>';
+    weak.forEach(function(w){h+='<div style="margin:4px 0">• <strong>'+scores[w].name+'</strong> → '+RECO[w]+'</div>';});
+  }
+  h+='<p style="margin-top:14px;font-size:13px;color:var(--muted)">ℹ️ Les parties <strong>Rédaction, Écoute et Expression orale</strong> seront évaluées par ton formateur et peuvent ajuster le résultat final.</p>';
+  return h;
+}
+
+function buildCorrection(marks){
+  var h='<details style="margin-top:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px"><summary style="cursor:pointer;font-weight:600;color:var(--navy)">📝 Voir la correction détaillée</summary><div style="margin-top:12px;font-size:13px;line-height:1.7">';
+  Object.keys(answerKey).forEach(function(id){
+    var g=marks[id],it=answerKey[id];
+    var col=g.mark==='✓'?'#1F9254':(g.mark==='✗'?'#C0392B':'#D08A00');
+    h+='<div style="padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:'+col+';font-weight:700">'+g.mark+'</span> <strong>'+it.lbl+'</strong> — ta réponse : «&nbsp;'+String(g.user).replace(/</g,'&lt;')+'&nbsp;»'+(g.expl?' · <em>'+g.expl+'</em>':'')+'</div>';
+  });
+  h+='<div style="padding:5px 0"><span style="color:#D08A00;font-weight:700">—</span> <strong>Rédaction (§1), Écoute (§4), Expression orale (§5)</strong> — correction formateur</div>';
+  h+='</div></details>';
+  return h;
+}
+
+function saveLocal(name,res){
+  try{
+    var blocks={};BLOCKS.forEach(function(b){blocks[b.id]=res.scores[b.id].got+'/'+res.scores[b.id].max;});
+    localStorage.setItem(LS_KEY,JSON.stringify({name:name,pct:res.pct,blocks:blocks,date:new Date().toISOString().slice(0,10)}));
+  }catch(e){}
+}
+
+function showResults(name,res,elapsedStr){
+  var main=document.querySelector('main');
+  var h='<div class="section" style="background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px">';
+  h+='<div class="hero-tag" style="color:var(--navy)">Résultats — Test de Fin de Parcours B2→C1</div>';
+  h+='<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--navy);margin:6px 0 2px">'+name+'</h2>';
+  h+='<div style="font-size:13px;color:var(--muted)">Durée : '+elapsedStr+' · Score automatique : <strong>'+res.pts+'/'+AUTO_MAX+'</strong></div>';
+  h+='<div style="font-size:44px;font-weight:600;color:var(--gold);margin:10px 0">'+res.pct+'%</div>';
+  BLOCKS.forEach(function(b){
+    var s=res.scores[b.id],p=Math.round(s.got/s.max*100);
+    h+='<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+s.name+'</span><span><strong>'+s.got+'/'+s.max+'</strong></span></div><div style="height:6px;background:var(--off);border-radius:3px;margin-top:3px"><div style="height:100%;width:'+p+'%;background:'+(p<60?'#C0392B':'var(--gold)')+';border-radius:3px"></div></div></div>';
+  });
+  h+='<div id="finalMessage" style="margin-top:18px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.7"></div>';
+  h+=buildCorrection(res.marks);
+  h+='<div id="sendStatus" style="margin-top:16px;font-size:13px;font-weight:600;color:var(--muted)">⏳ Envoi des résultats à ton formateur…</div>';
+  h+='</div>';
+  main.innerHTML=h;
+  document.getElementById('finalMessage').innerHTML=buildFeedback(res.scores,res.pct,name);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
-  var lines=[
-    '=== TEST DE FIN DE PARCOURS C1 — CATON ACADEMY ===',
-    'Apprenant : '+nom,
-    'Formule : '+getVal('id-formule'),
-    'Date : '+getVal('id-date'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s',
-    '',
-    '--- SECTION 0 · MANUEL AVANCÉ ---',
-    'MMA-1 (busy) : '+getVal('mma1'),
-    'MMA-2 (short) : '+getVal('mma2'),
-    'MMA-3 (fast) : '+getVal('mma3'),
-    'MMA-4 (challenging) : '+getVal('mma4'),
-    'MMB-1 : '+getVal('mmb1'),
-    'MMB-2 : '+getVal('mmb2'),
-    'MMB-3 : '+getVal('mmb3'),
-    'MMB-4 : '+getVal('mmb4'),
-    'MMC (correction temps) : '+getVal('mmc'),
-    'MMD bend prétérit : '+getVal('mmd1a')+' | p.p. : '+getVal('mmd1b'),
-    'MMD rise prétérit : '+getVal('mmd2a')+' | p.p. : '+getVal('mmd2b'),
-    'MMD sweep prétérit : '+getVal('mmd3a')+' | p.p. : '+getVal('mmd3b'),
-    'MMD seek prétérit : '+getVal('mmd4a')+' | p.p. : '+getVal('mmd4b'),
-    'MME-1 (can\'t) : '+getVal('mme1'),
-    'MME-2 (might) : '+getVal('mme2'),
-    'MME-3 (needn\'t) : '+getVal('mme3'),
-    'MME-4 (have to) : '+getVal('mme4'),
-    'MMF-1 (CONVINCE) : '+getVal('mmf1'),
-    'MMF-2 (RELY) : '+getVal('mmf2'),
-    'MMF-3 (BROAD) : '+getVal('mmf3'),
-    'MMF-4 (ACCESS) : '+getVal('mmf4'),
-    '',
-    '--- SECTION 1 · RAPPORT (220-260 mots) ---',
-    getVal('rapport'),
-    '',
-    '--- SECTION 2 · LANGUE ---',
-    '2A-1 : '+getRadio('q1'),
-    '2A-2 : '+getRadio('q2'),
-    '2A-3 : '+getRadio('q3'),
-    '2A-4 : '+getRadio('q4'),
-    '2A-5 : '+getRadio('q5'),
-    '2A-6 : '+getRadio('q6'),
-    '2B-1 : '+getVal('ob1'),
-    '2B-2 : '+getVal('ob2'),
-    '2B-3 : '+getVal('ob3'),
-    '2B-4 : '+getVal('ob4'),
-    '2B-5 : '+getVal('ob5'),
-    '2B-6 : '+getVal('ob6'),
-    '2C-1 (decision) : '+getRadio('c1'),
-    '2C-2 (heavy) : '+getRadio('c2'),
-    '2C-3 (keen) : '+getRadio('c3'),
-    '2C-4 (set) : '+getRadio('c4'),
-    '2D-1 (NEEDNT) : '+getVal('kw1'),
-    '2D-2 (WOULD) : '+getVal('kw2'),
-    '2D-3 (FOR) : '+getVal('kw3'),
-    '',
-    '--- SECTION 3 · LECTURE ---',
-    'T1 Q1 : '+getRadio('r1'),
-    'T1 Q2 : '+getRadio('r2'),
-    'T1 Q3 : '+getRadio('r3'),
-    'T1 Q4 : '+getRadio('r4'),
-    'T1 Q5 : '+getRadio('r5'),
-    'T2 Aff.6 : '+getRadio('r2s6'),
-    'T2 Aff.7 : '+getRadio('r2s7'),
-    'T2 Aff.8 : '+getRadio('r2s8'),
-    'T2 Aff.9 : '+getRadio('r2s9'),
-    'T2 Aff.10 : '+getRadio('r2s10'),
-    '',
-    '--- SECTION 4 · ÉCOUTE ---',
-    'A1 Q1 : '+getRadio('l1'),
-    'A1 Q2 : '+getRadio('l2'),
-    'A1 Q3 : '+getRadio('l3'),
-    'A1 Q4 : '+getRadio('l4'),
-    'A1 Q5 : '+getRadio('l5'),
-    'A2 L1 : '+getVal('l2g1'),
-    'A2 L2 : '+getVal('l2g2'),
-    'A2 L3 : '+getVal('l2g3'),
-    'A2 L4 : '+getVal('l2g4'),
-    'A2 L5 : '+getVal('l2g5'),
-    '',
-    '--- SECTION 5 · ORAL ---',
-    'Lien enregistrement : '+getVal('audio-link'),
-    'Commentaire : '+getVal('comment'),
-  ];
-  var subj=lines.join('\n');
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
-  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
-  }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
+  if(tInt)clearInterval(tInt);
+  var elapsed=startAt?Math.round((Date.now()-startAt)/1000):0;
+  var elapsedStr=pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s';
+  var res=gradeAll(getVal,getRadio);
+  saveLocal(nom,res);
+  var fm=getVal('id-formule'),fmCode=(fm.match(/ANG\d+/)||['ANG18-36-48'])[0];
+
+  var lines=['=== EndTest '+fmCode+' · B2→C1 — CATON ACADEMY ===',
+    'Apprenant : '+nom,'Formule : '+(fm||'non renseignée'),'Date : '+getVal('id-date'),
+    'Durée effective : '+elapsedStr,
+    'Score automatique : '+res.pts+'/'+AUTO_MAX+' ('+res.pct+'%)'];
+  BLOCKS.forEach(function(b){var s=res.scores[b.id];lines.push('  '+s.name+' : '+s.got+'/'+s.max);});
+  lines.push('','--- DÉTAIL PAR ITEM (auto + semi-auto) ---');
+  Object.keys(answerKey).forEach(function(id){
+    var g=res.marks[id];
+    lines.push(g.mark+' '+answerKey[id].lbl+' : '+g.user+(g.expl?' ['+g.expl+']':''));
+  });
+  lines.push('','--- §1 RAPPORT ANALYTIQUE (correction formateur) — '+wordCount(getVal('rapport'))+' mots ---',getVal('rapport')||'(vide)');
+  lines.push('','--- §4 ÉCOUTE (correction formateur) ---',
+    'A1 Q1 : '+getRadio('l1'),'A1 Q2 : '+getRadio('l2'),'A1 Q3 : '+getRadio('l3'),
+    'A1 Q4 : '+getRadio('l4'),'A1 Q5 : '+getRadio('l5'),
+    'A2 L1 : '+getVal('l2g1'),'A2 L2 : '+getVal('l2g2'),'A2 L3 : '+getVal('l2g3'),
+    'A2 L4 : '+getVal('l2g4'),'A2 L5 : '+getVal('l2g5'));
+  lines.push('','--- §5 ORAL (correction formateur) ---','Lien enregistrement : '+getVal('audio-link'),'Commentaire : '+getVal('comment'));
+
+  var subj='[EndTest] '+fmCode+' — '+nom+' — '+res.pct+'%';
+  showResults(nom,res,elapsedStr);
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})})
+  .then(function(r){var st=document.getElementById('sendStatus');if(!st)return;
+    if(r.ok){st.textContent='✓ Résultats transmis à ton formateur.';st.style.color='#1F9254';}
+    else{st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}})
+  .catch(function(){var st=document.getElementById('sendStatus');if(st){st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}});
 }
 
-/* == CATON ENGINE v7 == */
-(function(){
-var A={"mma1":"busiest","mma2":"shorter","mma3":"fastest","mma4":"more challenging","mmb1":["but","yet","although"],"mmb2":["nevertheless","however","nonetheless"],"mmb3":["despite","in spite of"],"mmb4":"or","mmc":null,"mmd1a":"bent","mmd1b":"bent","mmd2a":"rose","mmd2b":"risen","mmd3a":"swept","mmd3b":"swept","mmd4a":"sought","mmd4b":"sought","mme1":null,"mme2":null,"mme3":null,"mme4":null,"mmf1":"convincing","mmf2":"reliable","mmf3":"breadth","mmf4":"accessibility","q1":"A — which","q2":"A — Although","q3":"B — provided that","q4":"B — sign","q5":"A — so","q6":null,"ob1":"who","ob2":["yet","but"],"ob3":["because","as","since"],"ob4":"such","ob5":["barely","hardly"],"ob6":"unless","c1":null,"c2":null,"c3":null,"c4":null,"kw1":null,"kw2":null,"kw3":null,"r1":"B — It is a myth that harms performance","r2":"C — 23 minutes","r3":"B — The time lost each time the brain changes tasks","r4":"C — They perform worst on cognitive flexibility tests","r5":"C — Redesign workflows to protect concentration","l1":null,"l2":null,"l3":null,"l2g1":null,"l2g2":null,"l2g3":null,"l2g4":null,"l2g5":null};
-var pts=0,tot=0,done=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
-function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
-
-/* Score */
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-
-/* Feedback */
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-/* MCQ */
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}done++;upScore();}
-      });
+/* ══ Init UI (navigateur uniquement) ══ */
+function initUI(){
+  var t=document.getElementById('timer');if(t)t.textContent='90:00';
+  var q2aDiv=document.getElementById('qcm2a');
+  qcmData.forEach(function(q,i){
+    var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';q2aDiv.innerHTML+=h;
+  });
+  var c2cDiv=document.getElementById('coll2c');
+  collData.forEach(function(c){
+    var h='<div class="q-block"><div class="q-text">'+c.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
+    c.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+c.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';c2cDiv.innerHTML+=h;
+  });
+  var r1Div=document.getElementById('read1mcq');
+  r1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';r1Div.innerHTML+=h;
+  });
+  var r2Div=document.getElementById('read2match');
+  stmts.forEach(function(s,i){
+    var h='<div class="q-block"><div class="q-text">'+s+'</div><div class="radio-list" style="flex-direction:row;gap:6px">';
+    ['A','B','C'].forEach(function(l){h+='<label class="r-opt"><input type="radio" name="r2s'+(i+6)+'" value="'+l+'"> Writer '+l+'</label>';});
+    h+='</div></div>';r2Div.innerHTML+=h;
+  });
+  var l1Div=document.getElementById('listen1mcq');
+  l1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';l1Div.innerHTML+=h;
+  });
+  document.querySelectorAll('.r-opt').forEach(function(lbl){
+    lbl.addEventListener('click',function(){
+      var name=lbl.querySelector('input').name;
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
+      lbl.classList.add('selected');
     });
   });
+  try{
+    var prev=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(prev){
+      var main=document.querySelector('main');
+      var b=document.createElement('div');b.id='revisionBanner';
+      b.style.cssText='background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:13.5px;color:var(--navy)';
+      b.innerHTML='📋 <strong>Test déjà passé le '+prev.date+'</strong> — score partiel '+prev.pct+'% (hors expression). Cette nouvelle tentative sera également transmise à ton formateur.';
+      main.insertBefore(b,main.firstChild);
+      var ni=document.getElementById('id-nom');if(ni&&prev.name)ni.value=prev.name;
+    }
+  }catch(e){}
 }
-
-/* Inputs */
-function chkInp(inp){
-  var id=inp.id;
-  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
-  if(inp.dataset.done)return;
-  var v=inp.value.trim();if(!v)return;
-  inp.dataset.done='1';
-  var ans=A[id];
-  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-  done++;var r=ok(id,v);
-  inp.classList.remove('inp-ok','inp-ko');
-  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
-  upScore();
-}
-function bindInputs(){
-  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null){tot++;}
-    inp.addEventListener('blur',function(){chkInp(inp);});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-  upScore();
-}
-
-/* Textareas */
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
-})();
+if(typeof document!=='undefined'){initUI();}
+if(typeof module!=='undefined'&&module.exports){module.exports={answerKey:answerKey,gradeAll:gradeAll,buildFeedback:buildFeedback,BLOCKS:BLOCKS,AUTO_MAX:AUTO_MAX};}
 
 </script>
 </body>

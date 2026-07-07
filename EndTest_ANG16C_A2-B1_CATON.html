@@ -169,7 +169,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div class="id-block"><label>Date du test *</label><input class="n-input" id="id-date" type="date" required></div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : MANUEL -->
@@ -207,7 +207,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 
     <div class="subsection">
       <div class="sub-label">MM-D · Verbes irréguliers (4 pts)</div>
-      <p class="instruction">Donnez le prétérit et le participe passé pour chaque verbe.</p>
+      <p class="instruction">Donne le prétérit et le participe passé de chaque verbe.</p>
       <div class="irr-wrap">
         <table class="irr-table">
           <thead><tr><th>Infinitif</th><th>Prétérit</th><th>Participe passé</th></tr></thead>
@@ -366,6 +366,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div style="margin-top:28px">
       <button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom et tes scores sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique.</p>
     </div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(5)">← Retour</button><div></div></div>
@@ -374,12 +375,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=3600,rem=3600,tInt;
+var cur=0,total=3600,rem=3600,tInt=null,testStarted=false,startAt=null;
+var LS_KEY='caton_test_end_ang16c';
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
-startTimer();
-
+function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}var t=document.getElementById('timer');if(t)t.textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);var f=document.getElementById('timer-fill');if(f)f.style.width=Math.round(rem/total*100)+'%';},1000);}
+function startTest(){
+  if(!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  goSec(1);
+}
 function goSec(n){
+  if(n>0&&!testStarted){testStarted=true;startAt=Date.now();startTimer();}
   document.getElementById('sec'+cur).classList.remove('active');
   document.getElementById('sec'+n).classList.add('active');
   var tabs=document.querySelectorAll('.pnav-item');
@@ -387,7 +392,6 @@ function goSec(n){
   tabs[n].classList.add('active');tabs[n].classList.remove('done');
   cur=n;window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function countW(){
   var t=document.getElementById('email').value.trim();
   var n=t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;
@@ -395,6 +399,7 @@ function countW(){
   el.textContent=n+' mots · cible : 120–150';
   el.className='wc-bar'+(n>=120&&n<=150?' wc-ok':'');
 }
+function wordCount(t){t=String(t||'').trim();return t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;}
 
 var qcmData=[
   {id:'q1',q:'I _______ to the gym three times a week.',opts:['A — am going','B — go','C — went','D — have gone']},
@@ -404,26 +409,12 @@ var qcmData=[
   {id:'q5',q:'The meeting was cancelled _______ the manager was ill.',opts:['A — although','B — because','C — so','D — however']},
   {id:'q6',q:'I _______ just finished cooking dinner.',opts:["A — have","B — had","C — am","D — was"]},
 ];
-var q2aDiv=document.getElementById('qcm2a');
-qcmData.forEach(function(q,i){
-  var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';q2aDiv.innerHTML+=h;
-});
-
 var vocabData=[
-  {id:'v1',q:'1. make ___',opts:['a mistake','a travel','a journey','a sport']},
+  {id:'v1',q:'1. make ___',opts:['a mistake','a travel','a homework','a sport']},
   {id:'v2',q:'2. ___ a shower',opts:['take','make','do','have']},
   {id:'v3',q:'3. look ___ to something',opts:['forward','after','up','out']},
   {id:'v4',q:'4. ___ an appointment',opts:['book','do','make','take']},
 ];
-var v2cDiv=document.getElementById('vocab2c');
-vocabData.forEach(function(v){
-  var h='<div class="q-block"><div class="q-text">'+v.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
-  v.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+v.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';v2cDiv.innerHTML+=h;
-});
-
 var r1Data=[
   {id:'r1',q:"1. Where does Sophie work?",opts:['A — In a large corporation','B — In a small marketing company','C — In a school','D — From home']},
   {id:'r2',q:'2. What does "open plan" mean in this text?',opts:['A — The office has large windows','B — Everyone has their own office','C — All staff sit together in one room','D — The office is always open']},
@@ -431,203 +422,263 @@ var r1Data=[
   {id:'r4',q:"4. What is Sophie's main problem with her job?",opts:['A — The salary is too low','B — She has too much work','C — The commute takes too long','D — She doesn\'t like her colleagues']},
   {id:'r5',q:'5. What is Sophie thinking about doing next year?',opts:['A — Changing her job','B — Moving closer to the office','C — Working from home','D — Getting a pay rise']},
 ];
-var r1Div=document.getElementById('read1mcq');
-r1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';r1Div.innerHTML+=h;
-});
-
 var l1Data=[
   {id:'l1',q:'1. Why is David calling?',opts:['A — To cancel the appointment','B — To confirm a reservation','C — To ask for directions','D — To change the meeting time']},
   {id:'l2',q:'2. What time is the original appointment?',opts:['A — 9:00 am','B — 10:30 am','C — 2:00 pm','D — 3:30 pm']},
   {id:'l3',q:"3. What does the receptionist suggest?",opts:['A — Rescheduling for next week','B — Meeting by video call','C — Coming 30 minutes earlier','D — Waiting in the lobby']},
 ];
-var l1Div=document.getElementById('listen1mcq');
-l1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';l1Div.innerHTML+=h;
-});
 
-document.querySelectorAll('.r-opt').forEach(function(lbl){
-  lbl.addEventListener('click',function(){
-    var name=lbl.querySelector('input').name;
-    document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
-    lbl.classList.add('selected');
-  });
-});
-
-function getRadio(name){var el=document.querySelector('input[name="'+name+'\"]:checked');return el?el.value:'';}
+function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+/* ══ CATON ENGINE v2 — correction post-soumission uniquement ══ */
+function normA(s){return String(s).trim().toLowerCase().replace(/\u2019/g,"'").replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+
+/* answerKey unique — catégories : auto (blancs/radios), semi (correction d'erreurs, reformulations), manuel (formateur) */
+var answerKey={
+  /* §0 MANUEL — 20 pts */
+  mma1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 1 · never / visit',a:['have never visited',"'ve never visited"]},
+  mma2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 2 · finish',a:['finished']},
+  mma3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 3 · already / eat',a:['have already eaten',"'ve already eaten"]},
+  mma4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 4 · live',a:['lived']},
+  mmb1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 1',a:['so']},
+  mmb2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 2',a:['although']},
+  mmb3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 3',a:['because']},
+  mmb4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 4',a:['however']},
+  mmc:{cat:'semi',blk:'manuel',pts:4,lbl:'MM-C · Correction de temps (4 erreurs)',forms:[
+    {name:'go → went',re:/\bwent\b/i},
+    {name:'buyed → bought',re:/\bbought\b/i},
+    {name:'am coming → was coming / came / got home',re:/\b(was coming|came|got home|arrived)\b/i},
+    {name:'cook → cooked',re:/\bcooked\b/i}
+  ]},
+  mmd1a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D go · prétérit',a:['went']},
+  mmd1b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D go · participe passé',a:['gone']},
+  mmd2a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D speak · prétérit',a:['spoke']},
+  mmd2b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D speak · participe passé',a:['spoken']},
+  mmd3a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D take · prétérit',a:['took']},
+  mmd3b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D take · participe passé',a:['taken']},
+  mmd4a:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D know · prétérit',a:['knew']},
+  mmd4b:{cat:'auto',blk:'manuel',pts:0.5,lbl:'MM-D know · participe passé',a:['known']},
+  mme1:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 1 · SHOULD',forms:[{name:'should + drink (more water)',re:/\bshould\b[\s\S]*\bdrink\b/i}]},
+  mme2:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 2 · MUST',forms:[{name:'must + wear (a seatbelt)',re:/\bmust\b[\s\S]*\bwear\b/i}]},
+  mme3:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 3 · CAN',forms:[{name:'can + reserve/book (a table online)',re:/\bcan\b[\s\S]*\b(reserve|book)\b/i}]},
+  mme4:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 4 · COULD',forms:[{name:'could + swim (in this lake)',re:/\bcould\b[\s\S]*\bswim\b/i}]},
+  /* §2 LANGUE — 15 pts */
+  q1:{cat:'auto',blk:'langue',pts:1,lbl:'2A-1',a:['B — go'],radio:true},
+  q2:{cat:'auto',blk:'langue',pts:1,lbl:'2A-2',a:['C — has been learning'],radio:true},
+  q3:{cat:'auto',blk:'langue',pts:1,lbl:'2A-3',a:["A — can't"],radio:true},
+  q4:{cat:'auto',blk:'langue',pts:1,lbl:'2A-4',a:['C — if'],radio:true},
+  q5:{cat:'auto',blk:'langue',pts:1,lbl:'2A-5',a:['B — because'],radio:true},
+  q6:{cat:'auto',blk:'langue',pts:1,lbl:'2A-6',a:['A — have'],radio:true},
+  ob1:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 1',a:['wake','get']},
+  ob2:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 2',a:['travelling','traveling','commuting','going']},
+  ob3:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 3',a:['with']},
+  ob4:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 4',a:['on','at']},
+  ob5:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 5',a:['more']},
+  v1:{cat:'auto',blk:'langue',pts:1,lbl:'2C-1 make ___',a:['a mistake'],radio:true},
+  v2:{cat:'auto',blk:'langue',pts:1,lbl:'2C-2 ___ a shower',a:['take','have'],radio:true},
+  v3:{cat:'auto',blk:'langue',pts:1,lbl:'2C-3 look ___ to',a:['forward'],radio:true},
+  v4:{cat:'auto',blk:'langue',pts:1,lbl:'2C-4 ___ an appointment',a:['book','make'],radio:true},
+  /* §3 LECTURE — 10 pts */
+  r1:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q1',a:['B — In a small marketing company'],radio:true},
+  r2:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q2',a:['C — All staff sit together in one room'],radio:true},
+  r3:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q3',a:['B — She thinks he is an excellent boss'],radio:true},
+  r4:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q4',a:['C — The commute takes too long'],radio:true},
+  r5:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q5',a:['B — Moving closer to the office'],radio:true}
+};
+var BLOCKS=[
+  {id:'manuel',name:'§0 Manuel',max:20},
+  {id:'langue',name:'§2 Langue',max:15},
+  {id:'lecture',name:'§3 Lecture',max:10}
+];
+var AUTO_MAX=45; /* 20+15+10 — la Rédaction (15), l'Écoute (10) et l'Oral (5) sont évalués par le formateur */
+
+/* Table bloc → sections réelles du manuel (validée vs Notion lors des audits précédents) */
+var RECO={
+  manuel:'Manuel Intermédiaire — Section 11 (Tenses : Present Perfect vs Simple Past, verbes irréguliers) et Section 13 (Modal Verbs)',
+  langue:'Manuel Intermédiaire — Section 11 (Tenses) · Manuel Avancé — Section 18 (Linking Words) pour les mots de liaison et collocations',
+  lecture:'les textes et dialogues du Manuel Intermédiaire (Sections 10 à 13), en lecture guidée avec ton formateur'
+};
+
+function gradeItem(id,getV,getR){
+  var it=answerKey[id];
+  if(it.cat==='auto'){
+    var v=it.radio?getR(id):getV(id);
+    if(!v)return{got:0,mark:'✗',user:'(vide)',expl:'Attendu : '+it.a[0]};
+    var okk=it.a.some(function(x){return normA(x)===normA(v);});
+    return{got:okk?it.pts:0,mark:okk?'✓':'✗',user:v,expl:okk?'':'Attendu : '+it.a[0]};
+  }
+  /* semi : détection des formes corrigées attendues */
+  var t=getV(id),n=it.forms.length,hit=0,miss=[];
+  it.forms.forEach(function(f){if(f.re.test(t)){hit++;}else{miss.push(f.name);}});
+  var got=Math.round(it.pts*hit/n*2)/2;
+  return{got:got,mark:hit===n?'✓':(hit>0?'~':'✗'),user:t||'(vide)',semi:true,
+    expl:hit+'/'+n+' forme(s) détectée(s)'+(miss.length?' — manquant : '+miss.join(' · '):'')+' — à valider par le formateur'};
+}
+function gradeAll(getV,getR){
+  var scores={},marks={};
+  BLOCKS.forEach(function(b){scores[b.id]={got:0,max:b.max,name:b.name};});
+  var sumMax=0;
+  Object.keys(answerKey).forEach(function(id){
+    var it=answerKey[id],g=gradeItem(id,getV,getR);
+    scores[it.blk].got+=g.got;sumMax+=it.pts;marks[id]=g;
+  });
+  if(Math.abs(sumMax-AUTO_MAX)>0.001)throw new Error('answerKey/AUTO_MAX mismatch: '+sumMax);
+  var pts=BLOCKS.reduce(function(a,b){return a+scores[b.id].got;},0);
+  BLOCKS.forEach(function(b){scores[b.id].got=Math.round(scores[b.id].got*2)/2;});
+  return{scores:scores,pts:Math.round(pts*2)/2,pct:Math.round(pts/AUTO_MAX*100),marks:marks};
+}
+
+/* buildFeedback v2 — définie 1 seule fois */
+function buildFeedback(scores,pct,name){
+  var h='',weak=[];
+  BLOCKS.forEach(function(b){var s=scores[b.id];if(s.got/s.max<0.6)weak.push(b.id);});
+  var weakNames=weak.map(function(w){return scores[w].name;}).join(', ');
+  if(pct>=85){
+    h+='<p>🌟 <strong>Félicitations '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu maîtrises solidement le programme A2→B1. <strong>Objectif B1 atteint</strong> (sous réserve de la partie Expression) — tu es prêt(e) pour la <strong>certification CLOE</strong>.</p>';
+  }else if(pct>=65){
+    h+='<p>👏 <strong>Bravo '+name+' !</strong> Avec <strong>'+pct+'%</strong>, l\u2019objectif B1 est atteint. Une consolidation est conseillée avant la certification CLOE'+(weak.length?', en particulier sur '+weakNames:'')+'.</p>';
+  }else if(pct>=40){
+    h+='<p>💪 <strong>'+name+'</strong>, ton score partiel de <strong>'+pct+'%</strong> est un vrai point d\u2019appui. Une révision ciblée est recommandée avant d\u2019envisager la certification'+(weak.length?', sur '+weakNames:'')+'.</p>';
+  }else{
+    h+='<p>🤝 <strong>'+name+'</strong>, ce test sert exactement à ça : repérer ce qu\u2019il reste à consolider ('+pct+'% en correction automatique). On planifie ensemble une <strong>session de révision avec ton formateur</strong> avant d\u2019envisager la certification.</p>';
+  }
+  h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">Détail par bloc :</div>';
+  BLOCKS.forEach(function(b){
+    var s=scores[b.id],p=Math.round(s.got/s.max*100),low=p<60;
+    h+='<div style="margin:4px 0">'+(low?'🔶':'🔹')+' '+s.name+' : <strong>'+s.got+'/'+s.max+'</strong> ('+p+'%)'+(low?' — bloc à renforcer':'')+'</div>';
+  });
+  if(weak.length){
+    h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">📚 À revoir en priorité :</div>';
+    weak.forEach(function(w){h+='<div style="margin:4px 0">• <strong>'+scores[w].name+'</strong> → '+RECO[w]+'</div>';});
+  }
+  h+='<p style="margin-top:14px;font-size:13px;color:var(--muted)">ℹ️ Les parties <strong>Rédaction, Écoute et Expression orale</strong> seront évaluées par ton formateur et peuvent ajuster le résultat final.</p>';
+  return h;
+}
+
+function buildCorrection(marks){
+  var h='<details style="margin-top:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px"><summary style="cursor:pointer;font-weight:600;color:var(--navy)">📝 Voir la correction détaillée</summary><div style="margin-top:12px;font-size:13px;line-height:1.7">';
+  Object.keys(answerKey).forEach(function(id){
+    var g=marks[id],it=answerKey[id];
+    var col=g.mark==='✓'?'#1F9254':(g.mark==='✗'?'#C0392B':'#D08A00');
+    h+='<div style="padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:'+col+';font-weight:700">'+g.mark+'</span> <strong>'+it.lbl+'</strong> — ta réponse : «&nbsp;'+String(g.user).replace(/</g,'&lt;')+'&nbsp;»'+(g.expl?' · <em>'+g.expl+'</em>':'')+'</div>';
+  });
+  h+='<div style="padding:5px 0"><span style="color:#D08A00;font-weight:700">—</span> <strong>Rédaction (§1), Écoute (§4), Expression orale (§5)</strong> — correction formateur</div>';
+  h+='</div></details>';
+  return h;
+}
+
+function saveLocal(name,res){
+  try{
+    var blocks={};BLOCKS.forEach(function(b){blocks[b.id]=res.scores[b.id].got+'/'+res.scores[b.id].max;});
+    localStorage.setItem(LS_KEY,JSON.stringify({name:name,pct:res.pct,blocks:blocks,date:new Date().toISOString().slice(0,10)}));
+  }catch(e){}
+}
+
+function showResults(name,res,elapsedStr){
+  var main=document.querySelector('main');
+  var h='<div class="section" style="background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px">';
+  h+='<div class="hero-tag" style="color:var(--navy)">Résultats — Test de Fin de Parcours A2→B1</div>';
+  h+='<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--navy);margin:6px 0 2px">'+name+'</h2>';
+  h+='<div style="font-size:13px;color:var(--muted)">Durée : '+elapsedStr+' · Score automatique : <strong>'+res.pts+'/'+AUTO_MAX+'</strong></div>';
+  h+='<div style="font-size:44px;font-weight:600;color:var(--gold);margin:10px 0">'+res.pct+'%</div>';
+  BLOCKS.forEach(function(b){
+    var s=res.scores[b.id],p=Math.round(s.got/s.max*100);
+    h+='<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+s.name+'</span><span><strong>'+s.got+'/'+s.max+'</strong></span></div><div style="height:6px;background:var(--off);border-radius:3px;margin-top:3px"><div style="height:100%;width:'+p+'%;background:'+(p<60?'#C0392B':'var(--gold)')+';border-radius:3px"></div></div></div>';
+  });
+  h+='<div id="finalMessage" style="margin-top:18px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.7"></div>';
+  h+=buildCorrection(res.marks);
+  h+='<div id="sendStatus" style="margin-top:16px;font-size:13px;font-weight:600;color:var(--muted)">⏳ Envoi des résultats à ton formateur…</div>';
+  h+='</div>';
+  main.innerHTML=h;
+  document.getElementById('finalMessage').innerHTML=buildFeedback(res.scores,res.pct,name);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
-  var lines=[
-    '=== TEST DE FIN DE PARCOURS A2→B1 — CATON ACADEMY ===',
-    'Apprenant : '+nom,
-    'Formule : '+getVal('id-formule'),
-    'Date : '+getVal('id-date'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s',
-    '',
-    '--- SECTION 0 · MANUEL CONVERSATION ---',
-    'MMA-1 (never visit) : '+getVal('mma1'),
-    'MMA-2 (finish) : '+getVal('mma2'),
-    'MMA-3 (already eat) : '+getVal('mma3'),
-    'MMA-4 (live) : '+getVal('mma4'),
-    'MMB-1 (so) : '+getVal('mmb1'),
-    'MMB-2 (although) : '+getVal('mmb2'),
-    'MMB-3 (because) : '+getVal('mmb3'),
-    'MMB-4 (however) : '+getVal('mmb4'),
-    'MMC (correction) : '+getVal('mmc'),
-    'MMD go prétérit : '+getVal('mmd1a')+' | p.p. : '+getVal('mmd1b'),
-    'MMD speak prétérit : '+getVal('mmd2a')+' | p.p. : '+getVal('mmd2b'),
-    'MMD take prétérit : '+getVal('mmd3a')+' | p.p. : '+getVal('mmd3b'),
-    'MMD know prétérit : '+getVal('mmd4a')+' | p.p. : '+getVal('mmd4b'),
-    'MME-1 (should) : '+getVal('mme1'),
-    'MME-2 (must) : '+getVal('mme2'),
-    'MME-3 (can) : '+getVal('mme3'),
-    'MME-4 (could) : '+getVal('mme4'),
-    '',
-    '--- SECTION 1 · EMAIL INFORMEL (120-150 mots) ---',
-    getVal('email'),
-    '',
-    '--- SECTION 2 · LANGUE ---',
-    '2A-1 : '+getRadio('q1'),
-    '2A-2 : '+getRadio('q2'),
-    '2A-3 : '+getRadio('q3'),
-    '2A-4 : '+getRadio('q4'),
-    '2A-5 : '+getRadio('q5'),
-    '2A-6 : '+getRadio('q6'),
-    '2B-1 : '+getVal('ob1'),
-    '2B-2 : '+getVal('ob2'),
-    '2B-3 : '+getVal('ob3'),
-    '2B-4 : '+getVal('ob4'),
-    '2B-5 : '+getVal('ob5'),
-    '2C-1 : '+getRadio('v1'),
-    '2C-2 : '+getRadio('v2'),
-    '2C-3 : '+getRadio('v3'),
-    '2C-4 : '+getRadio('v4'),
-    '',
-    '--- SECTION 3 · LECTURE ---',
-    'Q1 : '+getRadio('r1'),
-    'Q2 : '+getRadio('r2'),
-    'Q3 : '+getRadio('r3'),
-    'Q4 : '+getRadio('r4'),
-    'Q5 : '+getRadio('r5'),
-    '',
-    '--- SECTION 4 · ÉCOUTE ---',
-    'A1 Q1 : '+getRadio('l1'),
-    'A1 Q2 : '+getRadio('l2'),
-    'A1 Q3 : '+getRadio('l3'),
-    'A2 L1 : '+getVal('l2g1'),
-    'A2 L2 : '+getVal('l2g2'),
-    'A2 L3 : '+getVal('l2g3'),
-    'A2 L4 : '+getVal('l2g4'),
-    'A2 L5 : '+getVal('l2g5'),
-    '',
-    '--- SECTION 5 · ORAL ---',
-    'Lien enregistrement : '+getVal('audio-link'),
-    'Commentaire : '+getVal('comment'),
-  ];
-  var subj=lines.join('\n');
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
-  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
-  }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
+  if(tInt)clearInterval(tInt);
+  var elapsed=startAt?Math.round((Date.now()-startAt)/1000):0;
+  var elapsedStr=pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s';
+  var res=gradeAll(getVal,getRadio);
+  saveLocal(nom,res);
+
+  var lines=['=== EndTest ANG16C · A2→B1 — CATON ACADEMY ===',
+    'Apprenant : '+nom,'Formule : '+(getVal('id-formule')||'ANG16C'),'Date : '+getVal('id-date'),
+    'Durée effective : '+elapsedStr,
+    'Score automatique : '+res.pts+'/'+AUTO_MAX+' ('+res.pct+'%)'];
+  BLOCKS.forEach(function(b){var s=res.scores[b.id];lines.push('  '+s.name+' : '+s.got+'/'+s.max);});
+  lines.push('','--- DÉTAIL PAR ITEM (auto + semi-auto) ---');
+  Object.keys(answerKey).forEach(function(id){
+    var g=res.marks[id];
+    lines.push(g.mark+' '+answerKey[id].lbl+' : '+g.user+(g.expl?' ['+g.expl+']':''));
+  });
+  lines.push('','--- §1 RÉDACTION (correction formateur) — '+wordCount(getVal('email'))+' mots ---',getVal('email')||'(vide)');
+  lines.push('','--- §4 ÉCOUTE (correction formateur) ---',
+    'A1 Q1 : '+getRadio('l1'),'A1 Q2 : '+getRadio('l2'),'A1 Q3 : '+getRadio('l3'),
+    'A2 L1 : '+getVal('l2g1'),'A2 L2 : '+getVal('l2g2'),'A2 L3 : '+getVal('l2g3'),
+    'A2 L4 : '+getVal('l2g4'),'A2 L5 : '+getVal('l2g5'));
+  lines.push('','--- §5 ORAL (correction formateur) ---','Lien enregistrement : '+getVal('audio-link'),'Commentaire : '+getVal('comment'));
+
+  var subj='[EndTest] ANG16C — '+nom+' — '+res.pct+'%';
+  showResults(nom,res,elapsedStr);
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})})
+  .then(function(r){var st=document.getElementById('sendStatus');if(!st)return;
+    if(r.ok){st.textContent='✓ Résultats transmis à ton formateur.';st.style.color='#1F9254';}
+    else{st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}})
+  .catch(function(){var st=document.getElementById('sendStatus');if(st){st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}});
 }
 
-/* == CATON ENGINE v7 == */
-(function(){
-var A={"mma1":["have never visited","\'ve never visited"],"mma2":["finished","has finished"],"mma3":["have already eaten","\'ve already eaten"],"mma4":["lived","has lived"],"mmb1":"so","mmb2":"although","mmb3":"because","mmb4":"however","mmc":null,"mmd1a":"went","mmd1b":"gone","mmd2a":"spoke","mmd2b":"spoken","mmd3a":"took","mmd3b":"taken","mmd4a":"knew","mmd4b":"known","mme1":null,"mme2":null,"mme3":null,"mme4":null,"q1":"B — go","q2":"C — has been learning","q3":"A — can\'t","q4":"C — if","q5":"B — because","q6":"A — have","ob1":["wake","get"],"ob2":["travelling","commuting","traveling"],"ob3":"with","ob4":["on","at"],"ob5":"more","v1":"a mistake","v2":["take","have"],"v3":"forward","v4":["book","make"],"r1":"B — In a small marketing company","r2":"C — All staff sit together in one room","r3":"B — She thinks he is an excellent boss","r4":"C — The commute takes too long","r5":"B — Moving closer to the office","l1":null,"l2":null,"l3":null,"l2g1":null,"l2g2":null,"l2g3":null,"l2g4":null,"l2g5":null};
-var pts=0,tot=0,done=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
-function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
-
-/* Score */
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-
-/* Feedback */
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-/* MCQ */
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}done++;upScore();}
-      });
+/* ══ Init UI (navigateur uniquement) ══ */
+function initUI(){
+  var t=document.getElementById('timer');if(t)t.textContent='60:00';
+  var q2aDiv=document.getElementById('qcm2a');
+  qcmData.forEach(function(q,i){
+    var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';q2aDiv.innerHTML+=h;
+  });
+  var v2cDiv=document.getElementById('vocab2c');
+  vocabData.forEach(function(v){
+    var h='<div class="q-block"><div class="q-text">'+v.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
+    v.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+v.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';v2cDiv.innerHTML+=h;
+  });
+  var r1Div=document.getElementById('read1mcq');
+  r1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';r1Div.innerHTML+=h;
+  });
+  var l1Div=document.getElementById('listen1mcq');
+  l1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';l1Div.innerHTML+=h;
+  });
+  document.querySelectorAll('.r-opt').forEach(function(lbl){
+    lbl.addEventListener('click',function(){
+      var name=lbl.querySelector('input').name;
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
+      lbl.classList.add('selected');
     });
   });
+  /* Bandeau repassage + pré-remplissage (traçabilité Qualiopi) */
+  try{
+    var prev=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(prev){
+      var main=document.querySelector('main');
+      var b=document.createElement('div');b.id='revisionBanner';
+      b.style.cssText='background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:13.5px;color:var(--navy)';
+      b.innerHTML='📋 <strong>Test déjà passé le '+prev.date+'</strong> — score partiel '+prev.pct+'% (hors expression). Cette nouvelle tentative sera également transmise à ton formateur.';
+      main.insertBefore(b,main.firstChild);
+      var ni=document.getElementById('id-nom');if(ni&&prev.name)ni.value=prev.name;
+    }
+  }catch(e){}
 }
-
-/* Inputs */
-function chkInp(inp){
-  var id=inp.id;
-  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
-  if(inp.dataset.done)return;
-  var v=inp.value.trim();if(!v)return;
-  inp.dataset.done='1';
-  var ans=A[id];
-  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-  done++;var r=ok(id,v);
-  inp.classList.remove('inp-ok','inp-ko');
-  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
-  upScore();
-}
-function bindInputs(){
-  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null){tot++;}
-    inp.addEventListener('blur',function(){chkInp(inp);});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-  upScore();
-}
-
-/* Textareas */
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
-})();
+if(typeof document!=='undefined'){initUI();}
+if(typeof module!=='undefined'&&module.exports){module.exports={answerKey:answerKey,gradeAll:gradeAll,buildFeedback:buildFeedback,BLOCKS:BLOCKS,AUTO_MAX:AUTO_MAX};}
 
 </script>
 </body>

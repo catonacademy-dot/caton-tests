@@ -151,7 +151,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div class="id-block"><label>Date du test *</label><input class="n-input" id="id-date" type="date" required></div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : GRAMMAIRE -->
@@ -268,7 +268,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="q-block"><div class="q-num">1 — What is your name and where are you from?</div><input class="n-input" id="ex1" placeholder="My name is … and I am from …"></div>
     <div class="q-block" style="margin-top:10px"><div class="q-num">2 — What do you do? (job or studies)</div><input class="n-input" id="ex2" placeholder="I am a … / I study …"></div>
     <div class="q-block" style="margin-top:10px"><div class="q-num">3 — What do you like doing in your free time?</div><input class="n-input" id="ex3" placeholder="I like …"></div>
-    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button></div>
+    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom et tes scores sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique.</p>
+    </div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(3)">← Retour</button><div></div></div>
 </div>
@@ -276,12 +278,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=3600,rem=3600,tInt;
+var cur=0,total=3600,rem=3600,tInt=null,testStarted=false,startAt=null;
+var LS_KEY='caton_test_mid_ang16f';
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
-startTimer();
-
+function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}var t=document.getElementById('timer');if(t)t.textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);var f=document.getElementById('timer-fill');if(f)f.style.width=Math.round(rem/total*100)+'%';},1000);}
+function startTest(){
+  if(!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  goSec(1);
+}
 function goSec(n){
+  if(n>0&&!testStarted){testStarted=true;startAt=Date.now();startTimer();}
   document.getElementById('sec'+cur).classList.remove('active');
   document.getElementById('sec'+n).classList.add('active');
   var tabs=document.querySelectorAll('.pnav-item');
@@ -297,13 +303,6 @@ var qcmData=[
   {id:'c4',q:'There _______ two cats in the garden.',opts:['A — is','B — have','C — are','D — be']},
   {id:'c5',q:'_______ she like chocolate?',opts:['A — Is','B — Does','C — Do','D — Has']},
 ];
-var cdiv=document.getElementById('qcm1c');
-qcmData.forEach(function(q,i){
-  var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';cdiv.innerHTML+=h;
-});
-
 var readData=[
   {id:'r1',q:'1. What time does Paul start work?',opts:['A — 7:00','B — 8:00','C — 9:00','D — 12:30']},
   {id:'r2',q:'2. When does Paul go to the gym?',opts:['A — Monday and Wednesday','B — Tuesday and Thursday','C — Every morning','D — At weekends']},
@@ -311,177 +310,232 @@ var readData=[
   {id:'r4',q:'4. Where do his parents live?',opts:['A — Far from his house','B — In another city','C — Ten minutes from his house','D — In the same street']},
   {id:'r5',q:'5. How does Paul feel about weekends?',opts:['A — He finds them boring','B — He really enjoys them','C — He prefers working','D — He is usually tired']},
 ];
-var rdiv=document.getElementById('readmcq');
-readData.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';rdiv.innerHTML+=h;
-});
-
-document.querySelectorAll('.r-opt').forEach(function(lbl){
-  lbl.addEventListener('click',function(){
-    var name=lbl.querySelector('input').name;
-    document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
-    lbl.classList.add('selected');
-  });
-});
 
 function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
+/* ══ CATON ENGINE v2 — correction post-soumission uniquement ══ */
+function normA(s){return String(s).trim().toLowerCase().replace(/\u2019/g,"'").replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+
+/* answerKey unique — auto (blancs/radios), semi (transformations en question, forme unique à détecter) */
+var answerKey={
+  /* §1 GRAMMAIRE — 20 pts */
+  g1:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-1 · to be',a:['am']},
+  g2:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-2 · to be',a:['are']},
+  g3:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-3 · to be (négatif)',a:["isn't",'is not']},
+  g4:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-4 · to be',a:['is']},
+  g5:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-5 · to be',a:['are']},
+  q1:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-1 · question (to be)',forms:[{name:'Are you from France?',re:/^\s*are\s+you\b[\s\S]*\bfrance\b/i}]},
+  q2:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-2 · question (does)',forms:[{name:'Does he work every day?',re:/^\s*does\s+he\b[\s\S]*\bwork\b/i}]},
+  q3:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-3 · question (do)',forms:[{name:'Do they have a dog?',re:/^\s*do\s+they\b[\s\S]*\b(have|has)\b/i}]},
+  q4:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-4 · question (to be)',forms:[{name:'Is she a teacher?',re:/^\s*is\s+she\b[\s\S]*\bteacher\b/i}]},
+  q5:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-5 · question (do)',forms:[{name:'Do you like coffee?',re:/^\s*do\s+you\b[\s\S]*\b(like|likes)\b[\s\S]*\bcoffee\b/i}]},
+  c1:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-1',a:["A — What's"],radio:true},
+  c2:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-2',a:['A — have'],radio:true},
+  c3:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-3',a:['A — study'],radio:true},
+  c4:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-4',a:['C — are'],radio:true},
+  c5:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-5',a:['B — Does'],radio:true},
+  /* §2 VOCABULAIRE — 15 pts */
+  v1:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2A · juillet',a:['july']},
+  v2:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2A · mercredi',a:['wednesday']},
+  v3:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2A · février',a:['february']},
+  v4:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2A · vendredi',a:['friday']},
+  v5:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2A · printemps',a:['spring']},
+  b1:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2B · le dos',a:['back','the back']},
+  b2:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2B · le poignet',a:['wrist','the wrist']},
+  b3:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2B · la gorge',a:['throat','the throat']},
+  b4:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2B · le pouce',a:['thumb','the thumb']},
+  b5:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2B · la cuisse',a:['thigh','the thigh']},
+  n1:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2C · 13',a:['thirteen']},
+  n2:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2C · 50',a:['fifty']},
+  n3:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2C · 17',a:['seventeen']},
+  n4:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2C · 80',a:['eighty']},
+  n5:{cat:'auto',blk:'vocabulaire',pts:1,lbl:'2C · 1er',a:['first','1st']},
+  /* §3 LECTURE — 10 pts */
+  r1:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q1',a:['C — 9:00'],radio:true},
+  r2:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q2',a:['B — Tuesday and Thursday'],radio:true},
+  r3:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q3',a:['D — Go to the market'],radio:true},
+  r4:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q4',a:['C — Ten minutes from his house'],radio:true},
+  r5:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q5',a:['B — He really enjoys them'],radio:true}
+};
+var BLOCKS=[
+  {id:'grammaire',name:'§1 Grammaire',max:20},
+  {id:'vocabulaire',name:'§2 Vocabulaire',max:15},
+  {id:'lecture',name:'§3 Lecture',max:10}
+];
+var AUTO_MAX=45; /* 20+15+10 — l'Expression écrite (5 pts, réponses personnelles) est évaluée par le formateur */
+
+/* Table bloc → sections réelles du manuel (référentiel validé vs Notion lors des audits de la série) */
+var RECO={
+  grammaire:'Manuel Basique — conjugaison de <em>to be</em> et formation des questions (do/does)',
+  vocabulaire:'Manuel Basique — sections Calendrier (jours, mois, saisons), Corps humain et Nombres',
+  lecture:'les textes simples du Manuel Basique (routines quotidiennes), en lecture guidée avec ton formateur'
+};
+
+function gradeItem(id,getV,getR){
+  var it=answerKey[id];
+  if(it.cat==='auto'){
+    var v=it.radio?getR(id):getV(id);
+    if(!v)return{got:0,mark:'✗',user:'(vide)',expl:'Attendu : '+it.a[0]};
+    var okk=it.a.some(function(x){return normA(x)===normA(v);});
+    return{got:okk?it.pts:0,mark:okk?'✓':'✗',user:v,expl:okk?'':'Attendu : '+it.a[0]};
+  }
+  var t=getV(id),n=it.forms.length,hit=0,miss=[];
+  it.forms.forEach(function(f){if(f.re.test(t)){hit++;}else{miss.push(f.name);}});
+  var got=Math.round(it.pts*hit/n*2)/2;
+  return{got:got,mark:hit===n?'✓':(hit>0?'~':'✗'),user:t||'(vide)',semi:true,
+    expl:hit+'/'+n+' forme(s) détectée(s)'+(miss.length?' — attendu : '+miss.join(' · '):'')+' — à valider par le formateur'};
+}
+function gradeAll(getV,getR){
+  var scores={},marks={};
+  BLOCKS.forEach(function(b){scores[b.id]={got:0,max:b.max,name:b.name};});
+  var sumMax=0;
+  Object.keys(answerKey).forEach(function(id){
+    var it=answerKey[id],g=gradeItem(id,getV,getR);
+    scores[it.blk].got+=g.got;sumMax+=it.pts;marks[id]=g;
+  });
+  if(Math.abs(sumMax-AUTO_MAX)>0.001)throw new Error('answerKey/AUTO_MAX mismatch: '+sumMax);
+  var pts=BLOCKS.reduce(function(a,b){return a+scores[b.id].got;},0);
+  BLOCKS.forEach(function(b){scores[b.id].got=Math.round(scores[b.id].got*2)/2;});
+  return{scores:scores,pts:Math.round(pts*2)/2,pct:Math.round(pts/AUTO_MAX*100),marks:marks};
+}
+
+/* buildFeedback v2 — définie 1 seule fois */
+function buildFeedback(scores,pct,name){
+  var h='',weak=[];
+  BLOCKS.forEach(function(b){var s=scores[b.id];if(s.got/s.max<0.6)weak.push(b.id);});
+  var weakNames=weak.map(function(w){return scores[w].name;}).join(', ');
+  if(pct>=85){
+    h+='<p>🌟 <strong>Félicitations '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu maîtrises solidement la première moitié du programme A1→A2. Excellente progression — on continue sur la seconde moitié du programme.</p>';
+  }else if(pct>=65){
+    h+='<p>👏 <strong>Bravo '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu es sur une bonne trajectoire. Revois '+(weak.length?weakNames:'les points encore fragiles')+' avant de poursuivre.</p>';
+  }else if(pct>=40){
+    h+='<p>💪 <strong>'+name+'</strong>, ton score partiel de <strong>'+pct+'%</strong> est un point d\u2019étape utile. Un échange avec ton formateur est recommandé, avec une révision ciblée'+(weak.length?' de '+weakNames:'')+'.</p>';
+  }else{
+    h+='<p>🤝 <strong>'+name+'</strong>, on reprend ensemble les fondamentaux avec ton formateur — c\u2019est exactement à ça que sert ce test ('+pct+'% en correction automatique).</p>';
+  }
+  h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">Détail par bloc :</div>';
+  BLOCKS.forEach(function(b){
+    var s=scores[b.id],p=Math.round(s.got/s.max*100),low=p<60;
+    h+='<div style="margin:4px 0">'+(low?'🔶':'🔹')+' '+s.name+' : <strong>'+s.got+'/'+s.max+'</strong> ('+p+'%)'+(low?' — bloc à renforcer':'')+'</div>';
+  });
+  if(weak.length){
+    h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">📚 À revoir en priorité :</div>';
+    weak.forEach(function(w){h+='<div style="margin:4px 0">• <strong>'+scores[w].name+'</strong> → '+RECO[w]+'</div>';});
+  }
+  h+='<p style="margin-top:14px;font-size:13px;color:var(--muted)">ℹ️ La partie <strong>Expression écrite</strong> sera évaluée par ton formateur et peut ajuster le résultat final.</p>';
+  return h;
+}
+
+function buildCorrection(marks){
+  var h='<details style="margin-top:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px"><summary style="cursor:pointer;font-weight:600;color:var(--navy)">📝 Voir la correction détaillée</summary><div style="margin-top:12px;font-size:13px;line-height:1.7">';
+  Object.keys(answerKey).forEach(function(id){
+    var g=marks[id],it=answerKey[id];
+    var col=g.mark==='✓'?'#1F9254':(g.mark==='✗'?'#C0392B':'#D08A00');
+    h+='<div style="padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:'+col+';font-weight:700">'+g.mark+'</span> <strong>'+it.lbl+'</strong> — ta réponse : «&nbsp;'+String(g.user).replace(/</g,'&lt;')+'&nbsp;»'+(g.expl?' · <em>'+g.expl+'</em>':'')+'</div>';
+  });
+  h+='<div style="padding:5px 0"><span style="color:#D08A00;font-weight:700">—</span> <strong>Expression écrite (§4)</strong> — correction formateur</div>';
+  h+='</div></details>';
+  return h;
+}
+
+function saveLocal(name,res){
+  try{
+    var blocks={};BLOCKS.forEach(function(b){blocks[b.id]=res.scores[b.id].got+'/'+res.scores[b.id].max;});
+    localStorage.setItem(LS_KEY,JSON.stringify({name:name,pct:res.pct,blocks:blocks,date:new Date().toISOString().slice(0,10)}));
+  }catch(e){}
+}
+
+function showResults(name,res,elapsedStr){
+  var main=document.querySelector('main');
+  var h='<div class="section" style="background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px">';
+  h+='<div class="hero-tag" style="color:var(--navy)">Résultats — Test de Mi-Parcours A1→A2</div>';
+  h+='<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--navy);margin:6px 0 2px">'+name+'</h2>';
+  h+='<div style="font-size:13px;color:var(--muted)">Durée : '+elapsedStr+' · Score automatique : <strong>'+res.pts+'/'+AUTO_MAX+'</strong></div>';
+  h+='<div style="font-size:44px;font-weight:600;color:var(--gold);margin:10px 0">'+res.pct+'%</div>';
+  BLOCKS.forEach(function(b){
+    var s=res.scores[b.id],p=Math.round(s.got/s.max*100);
+    h+='<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+s.name+'</span><span><strong>'+s.got+'/'+s.max+'</strong></span></div><div style="height:6px;background:var(--off);border-radius:3px;margin-top:3px"><div style="height:100%;width:'+p+'%;background:'+(p<60?'#C0392B':'var(--gold)')+';border-radius:3px"></div></div></div>';
+  });
+  h+='<div id="finalMessage" style="margin-top:18px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.7"></div>';
+  h+=buildCorrection(res.marks);
+  h+='<div id="sendStatus" style="margin-top:16px;font-size:13px;font-weight:600;color:var(--muted)">⏳ Envoi des résultats à ton formateur…</div>';
+  h+='</div>';
+  main.innerHTML=h;
+  document.getElementById('finalMessage').innerHTML=buildFeedback(res.scores,res.pct,name);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
-  var lines=[
-    '=== TEST MI-PARCOURS FONDAMENTAUX A1→A2 — CATON ACADEMY ===',
-    'Apprenant : '+nom,
-    'Formule : '+getVal('id-formule'),
-    'Date : '+getVal('id-date'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s',
-    '',
-    '--- §1 GRAMMAIRE ---',
-    '1A-1 (to be) : '+getVal('g1'),
-    '1A-2 (to be) : '+getVal('g2'),
-    '1A-3 (to be) : '+getVal('g3'),
-    '1A-4 (to be) : '+getVal('g4'),
-    '1A-5 (to be) : '+getVal('g5'),
-    '1B-1 (question) : '+getVal('q1'),
-    '1B-2 (question) : '+getVal('q2'),
-    '1B-3 (question) : '+getVal('q3'),
-    '1B-4 (question) : '+getVal('q4'),
-    '1B-5 (question) : '+getVal('q5'),
-    '1C-1 QCM : '+getRadio('c1'),
-    '1C-2 QCM : '+getRadio('c2'),
-    '1C-3 QCM : '+getRadio('c3'),
-    '1C-4 QCM : '+getRadio('c4'),
-    '1C-5 QCM : '+getRadio('c5'),
-    '',
-    '--- §2 VOCABULAIRE ---',
-    'Mois/jours - juillet : '+getVal('v1'),
-    'Mois/jours - mercredi : '+getVal('v2'),
-    'Mois/jours - février : '+getVal('v3'),
-    'Mois/jours - vendredi : '+getVal('v4'),
-    'Mois/jours - printemps : '+getVal('v5'),
-    'Corps - dos : '+getVal('b1'),
-    'Corps - poignet : '+getVal('b2'),
-    'Corps - gorge : '+getVal('b3'),
-    'Corps - pouce : '+getVal('b4'),
-    'Corps - cuisse : '+getVal('b5'),
-    'Chiffres - 13 : '+getVal('n1'),
-    'Chiffres - 50 : '+getVal('n2'),
-    'Chiffres - 17 : '+getVal('n3'),
-    'Chiffres - 80 : '+getVal('n4'),
-    'Chiffres - 1er : '+getVal('n5'),
-    '',
-    '--- §3 LECTURE ---',
-    'Q1 : '+getRadio('r1'),
-    'Q2 : '+getRadio('r2'),
-    'Q3 : '+getRadio('r3'),
-    'Q4 : '+getRadio('r4'),
-    'Q5 : '+getRadio('r5'),
-    '',
-    '--- §4 EXPRESSION ---',
-    'Réponse 1 : '+getVal('ex1'),
-    'Réponse 2 : '+getVal('ex2'),
-    'Réponse 3 : '+getVal('ex3'),
-  ];
-  var subj=lines.join('\n');
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
-  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
-  }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
+  if(tInt)clearInterval(tInt);
+  var elapsed=startAt?Math.round((Date.now()-startAt)/1000):0;
+  var elapsedStr=pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s';
+  var res=gradeAll(getVal,getRadio);
+  saveLocal(nom,res);
+
+  var lines=['=== MidCourse ANG16F · A1→A2 — CATON ACADEMY ===',
+    'Apprenant : '+nom,'Formule : '+(getVal('id-formule')||'ANG16F'),'Date : '+getVal('id-date'),
+    'Durée effective : '+elapsedStr,
+    'Score automatique : '+res.pts+'/'+AUTO_MAX+' ('+res.pct+'%)'];
+  BLOCKS.forEach(function(b){var s=res.scores[b.id];lines.push('  '+s.name+' : '+s.got+'/'+s.max);});
+  lines.push('','--- DÉTAIL PAR ITEM (auto + semi-auto) ---');
+  Object.keys(answerKey).forEach(function(id){
+    var g=res.marks[id];
+    lines.push(g.mark+' '+answerKey[id].lbl+' : '+g.user+(g.expl?' ['+g.expl+']':''));
+  });
+  lines.push('','--- §4 EXPRESSION ÉCRITE (correction formateur) ---',
+    'Réponse 1 (nom/origine) : '+(getVal('ex1')||'(vide)'),
+    'Réponse 2 (métier/études) : '+(getVal('ex2')||'(vide)'),
+    'Réponse 3 (loisir) : '+(getVal('ex3')||'(vide)'));
+
+  var subj='[MidCourse] ANG16F — '+nom+' — '+res.pct+'%';
+  showResults(nom,res,elapsedStr);
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})})
+  .then(function(r){var st=document.getElementById('sendStatus');if(!st)return;
+    if(r.ok){st.textContent='✓ Résultats transmis à ton formateur.';st.style.color='#1F9254';}
+    else{st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}})
+  .catch(function(){var st=document.getElementById('sendStatus');if(st){st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}});
 }
 
-/* == CATON ENGINE v7 == */
-(function(){
-var A={"g1":"am","g2":"are","g3":["isn\'t","is not"],"g4":"is","g5":"are","q1":null,"q2":null,"q3":null,"q4":null,"q5":null,"v1":"july","v2":"wednesday","v3":"february","v4":"friday","v5":"spring","b1":"back","b2":"wrist","b3":"throat","b4":"thumb","b5":"thigh","n1":"thirteen","n2":"fifty","n3":"seventeen","n4":"eighty","n5":"ninety","c1":"A — What\'s","c2":"A — have","c3":"A — study","c4":"C — are","c5":"B — Does","r1":"C — 9:00","r2":"B — Tuesday and Thursday","r3":"D — Go to the market","r4":"C — Ten minutes from his house","r5":"B — He really enjoys them","ex1":null,"ex2":null,"ex3":null};
-var pts=0,tot=0,done=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
-function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
-
-/* Score */
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-
-/* Feedback */
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-/* MCQ */
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}done++;upScore();}
-      });
+/* ══ Init UI (navigateur uniquement) ══ */
+function initUI(){
+  var t=document.getElementById('timer');if(t)t.textContent='60:00';
+  var cdiv=document.getElementById('qcm1c');
+  qcmData.forEach(function(q,i){
+    var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';cdiv.innerHTML+=h;
+  });
+  var rdiv=document.getElementById('readmcq');
+  readData.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';rdiv.innerHTML+=h;
+  });
+  document.querySelectorAll('.r-opt').forEach(function(lbl){
+    lbl.addEventListener('click',function(){
+      var name=lbl.querySelector('input').name;
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
+      lbl.classList.add('selected');
     });
   });
+  /* Bandeau repassage + pré-remplissage (traçabilité Qualiopi) */
+  try{
+    var prev=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(prev){
+      var main=document.querySelector('main');
+      var b=document.createElement('div');b.id='revisionBanner';
+      b.style.cssText='background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:13.5px;color:var(--navy)';
+      b.innerHTML='📋 <strong>Test déjà passé le '+prev.date+'</strong> — score partiel '+prev.pct+'% (hors expression). Cette nouvelle tentative sera également transmise à ton formateur.';
+      main.insertBefore(b,main.firstChild);
+      var ni=document.getElementById('id-nom');if(ni&&prev.name)ni.value=prev.name;
+    }
+  }catch(e){}
 }
-
-/* Inputs */
-function chkInp(inp){
-  var id=inp.id;
-  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
-  if(inp.dataset.done)return;
-  var v=inp.value.trim();if(!v)return;
-  inp.dataset.done='1';
-  var ans=A[id];
-  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-  done++;var r=ok(id,v);
-  inp.classList.remove('inp-ok','inp-ko');
-  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
-  upScore();
-}
-function bindInputs(){
-  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null){tot++;}
-    inp.addEventListener('blur',function(){chkInp(inp);});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-  upScore();
-}
-
-/* Textareas */
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
-})();
+if(typeof document!=='undefined'){initUI();}
+if(typeof module!=='undefined'&&module.exports){module.exports={answerKey:answerKey,gradeAll:gradeAll,buildFeedback:buildFeedback,BLOCKS:BLOCKS,AUTO_MAX:AUTO_MAX};}
 
 </script>
 </body>

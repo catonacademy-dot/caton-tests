@@ -153,7 +153,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div class="id-block"><label>Date du test *</label><input class="n-input" id="id-date" type="date" required></div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : GRAMMAIRE -->
@@ -282,7 +282,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="callout" style="background:var(--gold-pale);border-color:var(--gold);color:#7A5C00;">🎙 Enregistre un monologue de <strong>2-3 minutes</strong> sur le sujet suivant : <em>"Describe a challenge you have overcome at work or in your studies, and explain what you learned from it."</em> Dépose le fichier sur Google Drive ou WeTransfer et colle le lien ci-dessous.</div>
     <div class="q-block"><div class="q-num">Lien vers l'enregistrement</div><input class="n-input" id="audio-link" placeholder="https://drive.google.com/…"></div>
     <div class="q-block" style="margin-top:10px"><div class="q-num">Commentaire libre (facultatif)</div><textarea class="n-ta" id="comment" style="min-height:70px" placeholder="Remarques, difficultés rencontrées, message à votre formateur…"></textarea></div>
-    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button></div>
+    <div style="margin-top:28px"><button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom et tes scores sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique.</p>
+    </div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(4)">← Retour</button><div></div></div>
 </div>
@@ -290,12 +292,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=3600,rem=3600,tInt;
+var cur=0,total=2700,rem=2700,tInt=null,testStarted=false,startAt=null;
+var LS_KEY='caton_test_mid_ang36';
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
-startTimer();
-function goSec(n){document.getElementById('sec'+cur).classList.remove('active');document.getElementById('sec'+n).classList.add('active');var tabs=document.querySelectorAll('.pnav-item');tabs[cur].classList.remove('active');tabs[cur].classList.add('done');tabs[n].classList.add('active');tabs[n].classList.remove('done');cur=n;window.scrollTo({top:0,behavior:'smooth'});}
-function countW(){var t=document.getElementById('email').value.trim();var n=t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;var el=document.getElementById('wc-out');el.textContent=n+' mots · cible : 120–150';el.className='wc-bar'+(n>=120&&n<=150?' wc-ok':'');}
+function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}var t=document.getElementById('timer');if(t)t.textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);var f=document.getElementById('timer-fill');if(f)f.style.width=Math.round(rem/total*100)+'%';},1000);}
+function startTest(){
+  if(!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  goSec(1);
+}
+function goSec(n){
+  if(n>0&&!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  document.getElementById('sec'+cur).classList.remove('active');
+  document.getElementById('sec'+n).classList.add('active');
+  var tabs=document.querySelectorAll('.pnav-item');
+  tabs[cur].classList.remove('active');tabs[cur].classList.add('done');
+  tabs[n].classList.add('active');tabs[n].classList.remove('done');
+  cur=n;window.scrollTo({top:0,behavior:'smooth'});
+}
+function countW(){
+  var t=document.getElementById('email').value.trim();
+  var n=t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;
+  var el=document.getElementById('wc-out');
+  el.textContent=n+' mots · cible : 120–150';
+  el.className='wc-bar'+(n>=120&&n<=150?' wc-ok':'');
+}
+function wordCount(t){t=String(t||'').trim();return t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;}
 
 var qcmData=[
   {id:'c1',q:'_______ the meeting, I realised we had made an error.',opts:['A — During','B — While','C — For','D — Since']},
@@ -304,19 +325,13 @@ var qcmData=[
   {id:'c4',q:'She asked me _______ I had finished the report.',opts:['A — that','B — if','C — what','D — whether']},
   {id:'c5',q:'It is important that every employee _______ the new policy.',opts:['A — follows','B — follow','C — will follow','D — followed']},
 ];
-var cdiv=document.getElementById('qcm1c');
-qcmData.forEach(function(q,i){var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});h+='</div></div>';cdiv.innerHTML+=h;});
-
 var collData=[
   {id:'cl1',q:'1. ___ a conclusion',opts:['reach','make','do','take']},
   {id:'cl2',q:'2. come ___ effect',opts:['into','in','to','on']},
-  {id:'cl3',q:'3. ___ someone\'s expectations',opts:['meet','do','make','reach']},
+  {id:'cl3',q:"3. ___ someone's expectations",opts:['meet','do','make','reach']},
   {id:'cl4',q:'4. ___ a risk',opts:['take','make','do','have']},
   {id:'cl5',q:'5. ___ progress',opts:['make','do','take','have']},
 ];
-var cldiv=document.getElementById('coll2b');
-collData.forEach(function(c){var h='<div class="q-block"><div class="q-text">'+c.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';c.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+c.id+'" value="'+o+'"> '+o+'</label>';});h+='</div></div>';cldiv.innerHTML+=h;});
-
 var readData=[
   {id:'r1',q:'1. What was the key outcome of the UK trial?',opts:['A — Productivity fell significantly','B — Most companies maintained or improved productivity','C — Employees worked longer hours','D — All companies abandoned the trial']},
   {id:'r2',q:'2. How many companies permanently adopted the four-day week after the trial?',opts:['A — All 61','B — 29','C — 32','D — 2,900']},
@@ -324,150 +339,236 @@ var readData=[
   {id:'r4',q:'4. What does the economist quoted in the article say?',opts:['A — The four-day week is always beneficial','B — The benefits exist but are not universal','C — The model should be applied everywhere','D — The trial was poorly designed']},
   {id:'r5',q:'5. According to supporters, what is the real benefit of the four-day week?',opts:['A — Workers earn more money','B — Meetings become longer','C — It forces smarter, more efficient working','D — It reduces the need for technology']},
 ];
-var rdiv=document.getElementById('readmcq');
-readData.forEach(function(q){var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});h+='</div></div>';rdiv.innerHTML+=h;});
 
-document.querySelectorAll('.r-opt').forEach(function(lbl){lbl.addEventListener('click',function(){var name=lbl.querySelector('input').name;document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});lbl.classList.add('selected');});});
 function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+/* ══ CATON ENGINE v2 — correction post-soumission uniquement ══ */
+function normA(s){return String(s).trim().toLowerCase().replace(/\u2019/g,"'").replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+
+/* answerKey unique — auto (blancs/radios), semi (transformations passives et mot-clé, forme unique à détecter) */
+var answerKey={
+  /* §1 GRAMMAIRE — 20 pts */
+  g1:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-1 · already/start',a:['had already started']},
+  g2:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-2 · work (past perfect cont.)',a:['had been working']},
+  g3:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-3 · not/finish',a:["hasn't finished",'has not finished']},
+  g4:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-4 · study (conditionnel mixte)',a:['had studied']},
+  g5:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-5 · sign (passif)',a:['was signed']},
+  g6:{cat:'auto',blk:'grammaire',pts:1,lbl:'1A-6 · know (wish)',a:['had known']},
+  p1:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-1 · voix passive',forms:[{name:'The budget was approved (by the manager) yesterday',re:/\bthe budget was approved\b/i}]},
+  p2:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-2 · voix passive',forms:[{name:'A new hospital is being built',re:/\ba new hospital is being built\b/i}]},
+  p3:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-3 · voix passive',forms:[{name:'My laptop has been stolen',re:/\bmy laptop has been stolen\b/i}]},
+  p4:{cat:'semi',blk:'grammaire',pts:1,lbl:'1B-4 · voix passive',forms:[{name:'The results will be announced next week',re:/\bthe results will be announced\b/i}]},
+  c1:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-1',a:['A — During'],radio:true},
+  c2:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-2',a:['B — will be taken'],radio:true},
+  c3:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-3',a:['C — had known'],radio:true},
+  c4:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-4',a:['B — if','D — whether'],radio:true},
+  c5:{cat:'auto',blk:'grammaire',pts:2,lbl:'1C-5',a:['B — follow'],radio:true},
+  /* §2 LANGUE — 15 pts */
+  ob1:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 1',a:['become']},
+  ob2:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 2',a:['option','flexibility','freedom','chance','opportunity']},
+  ob3:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 3',a:['however']},
+  ob4:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 4',a:['find']},
+  ob5:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 5',a:['balance']},
+  ob6:{cat:'auto',blk:'langue',pts:1,lbl:'2A lacune 6',a:['regardless']},
+  cl1:{cat:'auto',blk:'langue',pts:1,lbl:'2B-1 · ___ a conclusion',a:['reach'],radio:true},
+  cl2:{cat:'auto',blk:'langue',pts:1,lbl:'2B-2 · come ___ effect',a:['into'],radio:true},
+  cl3:{cat:'auto',blk:'langue',pts:1,lbl:"2B-3 · ___ someone's expectations",a:['meet'],radio:true},
+  cl4:{cat:'auto',blk:'langue',pts:1,lbl:'2B-4 · ___ a risk',a:['take'],radio:true},
+  cl5:{cat:'auto',blk:'langue',pts:1,lbl:'2B-5 · ___ progress',a:['make'],radio:true},
+  kw1:{cat:'semi',blk:'langue',pts:1,lbl:'2C-1 · DESPITE',forms:[{name:'Despite the rain, they continued the match',re:/^\s*despite\b[\s\S]*\bcontinued\b/i}]},
+  kw2:{cat:'semi',blk:'langue',pts:1,lbl:'2C-2 · HAVE (causatif)',forms:[{name:'I had my car repaired last week',re:/\bhad\s+(my car|it)\s+repaired\b/i}]},
+  kw3:{cat:'semi',blk:'langue',pts:1,lbl:'2C-3 · UNLESS',forms:[{name:"Unless you hurry, you'll miss the train",re:/^\s*unless\b[\s\S]*\bhurry\b/i}]},
+  kw4:{cat:'semi',blk:'langue',pts:1,lbl:'2C-4 · BEEN',forms:[{name:'I have never been to Tokyo before',re:/\bhave never been to tokyo\b/i}]},
+  /* §3 LECTURE — 15 pts (5 items x 3 pts) */
+  r1:{cat:'auto',blk:'lecture',pts:3,lbl:'Lecture Q1',a:['B — Most companies maintained or improved productivity'],radio:true},
+  r2:{cat:'auto',blk:'lecture',pts:3,lbl:'Lecture Q2',a:['C — 32'],radio:true},
+  r3:{cat:'auto',blk:'lecture',pts:3,lbl:'Lecture Q3',a:['B — Some industries cannot reduce hours'],radio:true},
+  r4:{cat:'auto',blk:'lecture',pts:3,lbl:'Lecture Q4',a:['B — The benefits exist but are not universal'],radio:true},
+  r5:{cat:'auto',blk:'lecture',pts:3,lbl:'Lecture Q5',a:['C — It forces smarter, more efficient working'],radio:true}
+};
+var BLOCKS=[
+  {id:'grammaire',name:'§1 Grammaire',max:20},
+  {id:'langue',name:'§2 Langue',max:15},
+  {id:'lecture',name:'§3 Lecture',max:15}
+];
+var AUTO_MAX=50; /* 20+15+15 — Production écrite (20) et Expression orale (5) évaluées par le formateur */
+
+/* Table bloc → sections réelles du manuel (référentiel validé vs Notion lors des audits de la série) */
+var RECO={
+  grammaire:'Manuel Intermédiaire — Section 11 (Tenses : temps mixtes, conditionnel, voix passive)',
+  langue:'Manuel Avancé — Section 18 (Linking Words) · Manuel Intermédiaire — Section 11 (present perfect, structures causatives)',
+  lecture:'les textes argumentatifs de niveau B2 (Manuels Intermédiaire/Avancé), en lecture guidée avec ton formateur'
+};
+
+function gradeItem(id,getV,getR){
+  var it=answerKey[id];
+  if(it.cat==='auto'){
+    var v=it.radio?getR(id):getV(id);
+    if(!v)return{got:0,mark:'✗',user:'(vide)',expl:'Attendu : '+it.a[0]};
+    var okk=it.a.some(function(x){return normA(x)===normA(v);});
+    return{got:okk?it.pts:0,mark:okk?'✓':'✗',user:v,expl:okk?'':'Attendu : '+it.a[0]};
+  }
+  var t=getV(id),n=it.forms.length,hit=0,miss=[];
+  it.forms.forEach(function(f){if(f.re.test(t)){hit++;}else{miss.push(f.name);}});
+  var got=Math.round(it.pts*hit/n*2)/2;
+  return{got:got,mark:hit===n?'✓':(hit>0?'~':'✗'),user:t||'(vide)',semi:true,
+    expl:hit+'/'+n+' forme(s) détectée(s)'+(miss.length?' — attendu : '+miss.join(' · '):'')+' — à valider par le formateur'};
+}
+function gradeAll(getV,getR){
+  var scores={},marks={};
+  BLOCKS.forEach(function(b){scores[b.id]={got:0,max:b.max,name:b.name};});
+  var sumMax=0;
+  Object.keys(answerKey).forEach(function(id){
+    var it=answerKey[id],g=gradeItem(id,getV,getR);
+    scores[it.blk].got+=g.got;sumMax+=it.pts;marks[id]=g;
+  });
+  if(Math.abs(sumMax-AUTO_MAX)>0.001)throw new Error('answerKey/AUTO_MAX mismatch: '+sumMax);
+  var pts=BLOCKS.reduce(function(a,b){return a+scores[b.id].got;},0);
+  BLOCKS.forEach(function(b){scores[b.id].got=Math.round(scores[b.id].got*2)/2;});
+  return{scores:scores,pts:Math.round(pts*2)/2,pct:Math.round(pts/AUTO_MAX*100),marks:marks};
+}
+
+/* buildFeedback v2 — définie 1 seule fois */
+function buildFeedback(scores,pct,name){
+  var h='',weak=[];
+  BLOCKS.forEach(function(b){var s=scores[b.id];if(s.got/s.max<0.6)weak.push(b.id);});
+  var weakNames=weak.map(function(w){return scores[w].name;}).join(', ');
+  if(pct>=85){
+    h+='<p>🌟 <strong>Félicitations '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu maîtrises solidement la première moitié du programme B1→C1. Excellente progression — on continue sur la seconde moitié du programme.</p>';
+  }else if(pct>=65){
+    h+='<p>👏 <strong>Bravo '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu es sur une bonne trajectoire. Revois '+(weak.length?weakNames:'les points encore fragiles')+' avant de poursuivre.</p>';
+  }else if(pct>=40){
+    h+='<p>💪 <strong>'+name+'</strong>, ton score partiel de <strong>'+pct+'%</strong> est un point d\u2019étape utile. Un échange avec ton formateur est recommandé, avec une révision ciblée'+(weak.length?' de '+weakNames:'')+'.</p>';
+  }else{
+    h+='<p>🤝 <strong>'+name+'</strong>, on reprend ensemble les fondamentaux avec ton formateur — c\u2019est exactement à ça que sert ce test ('+pct+'% en correction automatique).</p>';
+  }
+  h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">Détail par bloc :</div>';
+  BLOCKS.forEach(function(b){
+    var s=scores[b.id],p=Math.round(s.got/s.max*100),low=p<60;
+    h+='<div style="margin:4px 0">'+(low?'🔶':'🔹')+' '+s.name+' : <strong>'+s.got+'/'+s.max+'</strong> ('+p+'%)'+(low?' — bloc à renforcer':'')+'</div>';
+  });
+  if(weak.length){
+    h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">📚 À revoir en priorité :</div>';
+    weak.forEach(function(w){h+='<div style="margin:4px 0">• <strong>'+scores[w].name+'</strong> → '+RECO[w]+'</div>';});
+  }
+  h+='<p style="margin-top:14px;font-size:13px;color:var(--muted)">ℹ️ Les parties <strong>Production écrite et Expression orale</strong> seront évaluées par ton formateur et peuvent ajuster le résultat final.</p>';
+  return h;
+}
+
+function buildCorrection(marks){
+  var h='<details style="margin-top:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px"><summary style="cursor:pointer;font-weight:600;color:var(--navy)">📝 Voir la correction détaillée</summary><div style="margin-top:12px;font-size:13px;line-height:1.7">';
+  Object.keys(answerKey).forEach(function(id){
+    var g=marks[id],it=answerKey[id];
+    var col=g.mark==='✓'?'#1F9254':(g.mark==='✗'?'#C0392B':'#D08A00');
+    h+='<div style="padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:'+col+';font-weight:700">'+g.mark+'</span> <strong>'+it.lbl+'</strong> — ta réponse : «&nbsp;'+String(g.user).replace(/</g,'&lt;')+'&nbsp;»'+(g.expl?' · <em>'+g.expl+'</em>':'')+'</div>';
+  });
+  h+='<div style="padding:5px 0"><span style="color:#D08A00;font-weight:700">—</span> <strong>Production écrite (§4), Expression orale (§5)</strong> — correction formateur</div>';
+  h+='</div></details>';
+  return h;
+}
+
+function saveLocal(name,res){
+  try{
+    var blocks={};BLOCKS.forEach(function(b){blocks[b.id]=res.scores[b.id].got+'/'+res.scores[b.id].max;});
+    localStorage.setItem(LS_KEY,JSON.stringify({name:name,pct:res.pct,blocks:blocks,date:new Date().toISOString().slice(0,10)}));
+  }catch(e){}
+}
+
+function showResults(name,res,elapsedStr){
+  var main=document.querySelector('main');
+  var h='<div class="section" style="background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px">';
+  h+='<div class="hero-tag" style="color:var(--navy)">Résultats — Test de Mi-Parcours B1→C1</div>';
+  h+='<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--navy);margin:6px 0 2px">'+name+'</h2>';
+  h+='<div style="font-size:13px;color:var(--muted)">Durée : '+elapsedStr+' · Score automatique : <strong>'+res.pts+'/'+AUTO_MAX+'</strong></div>';
+  h+='<div style="font-size:44px;font-weight:600;color:var(--gold);margin:10px 0">'+res.pct+'%</div>';
+  BLOCKS.forEach(function(b){
+    var s=res.scores[b.id],p=Math.round(s.got/s.max*100);
+    h+='<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+s.name+'</span><span><strong>'+s.got+'/'+s.max+'</strong></span></div><div style="height:6px;background:var(--off);border-radius:3px;margin-top:3px"><div style="height:100%;width:'+p+'%;background:'+(p<60?'#C0392B':'var(--gold)')+';border-radius:3px"></div></div></div>';
+  });
+  h+='<div id="finalMessage" style="margin-top:18px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.7"></div>';
+  h+=buildCorrection(res.marks);
+  h+='<div id="sendStatus" style="margin-top:16px;font-size:13px;font-weight:600;color:var(--muted)">⏳ Envoi des résultats à ton formateur…</div>';
+  h+='</div>';
+  main.innerHTML=h;
+  document.getElementById('finalMessage').innerHTML=buildFeedback(res.scores,res.pct,name);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
-  var lines=[
-    '=== TEST MI-PARCOURS APPROFONDISSEMENT B1→C1 — CATON ACADEMY ===',
-    'Apprenant : '+nom,'Formule : '+getVal('id-formule'),'Date : '+getVal('id-date'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s','',
-    '--- §1 GRAMMAIRE ---',
-    '1A-1 (already start) : '+getVal('g1'),'1A-2 (work/promote) : '+getVal('g2'),
-    '1A-3 (not finish) : '+getVal('g3'),'1A-4 (conditional) : '+getVal('g4'),
-    '1A-5 (passive) : '+getVal('g5'),'1A-6 (wish) : '+getVal('g6'),
-    '1B-1 passive : '+getVal('p1'),'1B-2 passive : '+getVal('p2'),
-    '1B-3 passive : '+getVal('p3'),'1B-4 passive : '+getVal('p4'),
-    '1C QCM-1 : '+getRadio('c1'),'1C QCM-2 : '+getRadio('c2'),'1C QCM-3 : '+getRadio('c3'),
-    '1C QCM-4 : '+getRadio('c4'),'1C QCM-5 : '+getRadio('c5'),'',
-    '--- §2 LANGUE ---',
-    '2A-1 : '+getVal('ob1'),'2A-2 : '+getVal('ob2'),'2A-3 : '+getVal('ob3'),
-    '2A-4 : '+getVal('ob4'),'2A-5 : '+getVal('ob5'),'2A-6 : '+getVal('ob6'),
-    '2B-1 : '+getRadio('cl1'),'2B-2 : '+getRadio('cl2'),'2B-3 : '+getRadio('cl3'),
-    '2B-4 : '+getRadio('cl4'),'2B-5 : '+getRadio('cl5'),
-    '2C-1 (despite) : '+getVal('kw1'),'2C-2 (have) : '+getVal('kw2'),
-    '2C-3 (unless) : '+getVal('kw3'),'2C-4 (been) : '+getVal('kw4'),'',
-    '--- §3 LECTURE ---',
-    'Q1 : '+getRadio('r1'),'Q2 : '+getRadio('r2'),'Q3 : '+getRadio('r3'),
-    'Q4 : '+getRadio('r4'),'Q5 : '+getRadio('r5'),'',
-    '--- §4 RÉDACTION (120-150 mots) ---',getVal('email'),'',
-    '--- §5 ORAL ---',
-    'Lien : '+getVal('audio-link'),'Commentaire : '+getVal('comment'),
-  ];
-  var subj='Mi-Parcours Approfondissement B1→C1 — '+nom+' — '+getVal('id-date');
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
-  fetch('https://formspree.io/f/mlgadonn',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({subject:subj,message:lines.join('\n')})
-  }).then(function(r){
-    if(r.ok){
-      document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>';
-    } else {
-      document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur d\'envoi</h2><p class="submit-sub">Merci de contacter Lenny@catonacademy.com directement.</p></div>';
+  if(tInt)clearInterval(tInt);
+  var elapsed=startAt?Math.round((Date.now()-startAt)/1000):0;
+  var elapsedStr=pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s';
+  var res=gradeAll(getVal,getRadio);
+  saveLocal(nom,res);
+
+  var lines=['=== MidCourse ANG36 · B1→C1 — CATON ACADEMY ===',
+    'Apprenant : '+nom,'Formule : '+(getVal('id-formule')||'ANG36'),'Date : '+getVal('id-date'),
+    'Durée effective : '+elapsedStr,
+    'Score automatique : '+res.pts+'/'+AUTO_MAX+' ('+res.pct+'%)'];
+  BLOCKS.forEach(function(b){var s=res.scores[b.id];lines.push('  '+s.name+' : '+s.got+'/'+s.max);});
+  lines.push('','--- DÉTAIL PAR ITEM (auto + semi-auto) ---');
+  Object.keys(answerKey).forEach(function(id){
+    var g=res.marks[id];
+    lines.push(g.mark+' '+answerKey[id].lbl+' : '+g.user+(g.expl?' ['+g.expl+']':''));
+  });
+  lines.push('','--- §4 PRODUCTION ÉCRITE (correction formateur) — '+wordCount(getVal('email'))+' mots ---',getVal('email')||'(vide)');
+  lines.push('','--- §5 EXPRESSION ORALE (correction formateur) ---','Lien enregistrement : '+getVal('audio-link'),'Commentaire : '+getVal('comment'));
+
+  var subj='[MidCourse] ANG36 — '+nom+' — '+res.pct+'%';
+  showResults(nom,res,elapsedStr);
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})})
+  .then(function(r){var st=document.getElementById('sendStatus');if(!st)return;
+    if(r.ok){st.textContent='✓ Résultats transmis à ton formateur.';st.style.color='#1F9254';}
+    else{st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}})
+  .catch(function(){var st=document.getElementById('sendStatus');if(st){st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}});
+}
+
+/* ══ Init UI (navigateur uniquement) ══ */
+function initUI(){
+  var t=document.getElementById('timer');if(t)t.textContent='45:00';
+  var cdiv=document.getElementById('qcm1c');
+  qcmData.forEach(function(q,i){
+    var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';cdiv.innerHTML+=h;
+  });
+  var cldiv=document.getElementById('coll2b');
+  collData.forEach(function(c){
+    var h='<div class="q-block"><div class="q-text">'+c.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
+    c.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+c.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';cldiv.innerHTML+=h;
+  });
+  var rdiv=document.getElementById('readmcq');
+  readData.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';rdiv.innerHTML+=h;
+  });
+  document.querySelectorAll('.r-opt').forEach(function(lbl){
+    lbl.addEventListener('click',function(){
+      var name=lbl.querySelector('input').name;
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
+      lbl.classList.add('selected');
+    });
+  });
+  /* Bandeau repassage + pré-remplissage (traçabilité Qualiopi) */
+  try{
+    var prev=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(prev){
+      var main=document.querySelector('main');
+      var b=document.createElement('div');b.id='revisionBanner';
+      b.style.cssText='background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:13.5px;color:var(--navy)';
+      b.innerHTML='📋 <strong>Test déjà passé le '+prev.date+'</strong> — score partiel '+prev.pct+'% (hors expression). Cette nouvelle tentative sera également transmise à ton formateur.';
+      main.insertBefore(b,main.firstChild);
+      var ni=document.getElementById('id-nom');if(ni&&prev.name)ni.value=prev.name;
     }
-  }).catch(function(){
-    document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur d\'envoi</h2><p class="submit-sub">Merci de contacter Lenny@catonacademy.com directement.</p></div>';
-  });
+  }catch(e){}
 }
-
-/* == CATON ENGINE v7 == */
-(function(){
-var A={"g1":"had already started","g2":"had been working","g3":["hasn\'t finished","has not finished"],"g4":"had studied","g5":"was signed","g6":"had known","p1":null,"p2":null,"p3":null,"p4":null,"ob1":"become","ob2":["option","flexibility","freedom","chance","opportunity"],"ob3":"however","ob4":"find","ob5":"balance","ob6":"regardless","kw1":null,"kw2":null,"kw3":null,"kw4":null,"c1":"A — During","c2":"B — will be taken","c3":"C — had known","c4":["B — if","D — whether"],"c5":"B — follow","cl1":"reach","cl2":"into","cl3":"meet","cl4":"take","cl5":"make","r1":"B — Most companies maintained or improved productivity","r2":"C — 32","r3":"B — Some industries cannot reduce hours","r4":"B — The benefits exist but are not universal","r5":"C — It forces smarter, more efficient working"};
-var pts=0,tot=0,done=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
-function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
-
-/* Score */
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-
-/* Feedback */
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-/* MCQ */
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}done++;upScore();}
-      });
-    });
-  });
-}
-
-/* Inputs */
-function chkInp(inp){
-  var id=inp.id;
-  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
-  if(inp.dataset.done)return;
-  var v=inp.value.trim();if(!v)return;
-  inp.dataset.done='1';
-  var ans=A[id];
-  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-  done++;var r=ok(id,v);
-  inp.classList.remove('inp-ok','inp-ko');
-  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
-  upScore();
-}
-function bindInputs(){
-  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null){tot++;}
-    inp.addEventListener('blur',function(){chkInp(inp);});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-  upScore();
-}
-
-/* Textareas */
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
-})();
+if(typeof document!=='undefined'){initUI();}
+if(typeof module!=='undefined'&&module.exports){module.exports={answerKey:answerKey,gradeAll:gradeAll,buildFeedback:buildFeedback,BLOCKS:BLOCKS,AUTO_MAX:AUTO_MAX};}
 
 </script>
 </body>

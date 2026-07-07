@@ -168,7 +168,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div class="id-block"><label>Date du test *</label><input class="n-input" id="id-date" type="date" required></div>
   </div>
-  <div class="nav-footer"><div></div><button class="btn-next" onclick="goSec(1)">Commencer →</button></div>
+  <div class="nav-footer"><div></div><button class="btn-next" onclick="startTest()">✦ Commencer le test</button></div>
 </div>
 
 <!-- SEC 1 : MANUEL BASIQUE -->
@@ -184,7 +184,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
       <div class="sub-label">MM-A · Verbe TO BE — conjugaison (4 pts)</div>
       <p class="instruction">Complète avec la forme correcte de "to be" (am / is / are / isn't / aren't).</p>
       <div class="q-block"><div class="q-num">1</div><div class="q-text">My name <input class="inline-fill" id="mma1" placeholder="…"> Sophie. I'm from France.</div></div>
-      <div class="q-block"><div class="q-num">2</div><div class="q-text">They <input class="inline-fill" id="mma2" placeholder="…"> students. They work in a hospital.</div></div>
+      <div class="q-block"><div class="q-num">2</div><div class="q-text">They <input class="inline-fill" id="mma2" placeholder="…"> students — they are nurses in a hospital.</div></div>
       <div class="q-block"><div class="q-num">3</div><div class="q-text">It <input class="inline-fill" id="mma3" placeholder="…"> cold today — the temperature is 28 degrees!</div></div>
       <div class="q-block"><div class="q-num">4</div><div class="q-text">We <input class="inline-fill" id="mma4" placeholder="…"> happy to be here. It's a beautiful place.</div></div>
     </div>
@@ -212,10 +212,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     <div class="subsection">
       <div class="sub-label">MM-D · Pronoms personnels et adjectifs possessifs (4 pts)</div>
       <p class="instruction">Complète avec le pronom ou adjectif possessif correct.</p>
-      <div class="q-block"><div class="q-num">1</div><div class="q-text"><input class="inline-fill" id="mmd1" placeholder="…"> name is Tom. He is my brother. <em>(pronom sujet)</em></div></div>
+      <div class="q-block"><div class="q-num">1</div><div class="q-text"><input class="inline-fill" id="mmd1" placeholder="…"> name is Tom. He is my brother. <em>(adjectif possessif)</em></div></div>
       <div class="q-block"><div class="q-num">2</div><div class="q-text">This is Anna. <input class="inline-fill" id="mmd2" placeholder="…"> car is blue. <em>(possessif)</em></div></div>
       <div class="q-block"><div class="q-num">3</div><div class="q-text">We love <input class="inline-fill" id="mmd3" placeholder="…"> country. France is beautiful. <em>(possessif)</em></div></div>
-      <div class="q-block"><div class="q-num">4</div><div class="q-text">Is this your bag? No, it's not mine — it's <input class="inline-fill" id="mmd4" placeholder="…">. <em>(him / his / her / hers)</em></div></div>
+      <div class="q-block"><div class="q-num">4</div><div class="q-text">This bag isn't mine, it belongs to Anna — it's <input class="inline-fill" id="mmd4" placeholder="…">. <em>(him / his / her / hers)</em></div></div>
     </div>
 
     <div class="subsection">
@@ -256,12 +256,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2A · QCM — Grammaire de base</div>
+      <div class="sub-label">2A · QCM — Grammaire de base (6 pts)</div>
       <div id="qcm2a"></div>
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2B · Texte à trous — La météo</div>
+      <div class="sub-label">2B · Texte à trous — La météo (5 pts)</div>
       <p class="instruction">Complète le texte avec les mots suivants : <strong>cold / sunny / weather / raining / wear</strong>.</p>
       <div class="passage">
         <p>The <strong>1___</strong> in England is very unpredictable. In summer, it can be <strong>2___</strong> and warm, but it is often <strong>3___</strong>. In winter, it gets very <strong>4___</strong>, especially in the north. People always <strong>5___</strong> a jacket when they go outside, just in case!</p>
@@ -276,7 +276,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
 
     <div class="subsection">
-      <div class="sub-label">2C · Vocabulaire — Chiffres et nombres</div>
+      <div class="sub-label">2C · Vocabulaire — Chiffres et nombres (4 pts)</div>
       <div id="vocab2c"></div>
     </div>
   </div>
@@ -361,6 +361,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
     </div>
     <div style="margin-top:28px">
       <button class="btn-submit" onclick="submitTest()">Soumettre mes réponses ✓</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5">🔒 Ton nom et tes scores sont transmis à ton formateur CATON Academy à des fins de suivi pédagogique.</p>
     </div>
   </div>
   <div class="nav-footer" style="margin-top:0;border-top:0"><button class="btn-back" onclick="goSec(5)">← Retour</button><div></div></div>
@@ -369,12 +370,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);fo
 </main>
 
 <script>
-var cur=0,total=3600,rem=3600,tInt;
+var cur=0,total=3600,rem=3600,tInt=null,testStarted=false,startAt=null;
+var LS_KEY='caton_test_end_ang16f';
 function pad(n){return n<10?'0'+n:n;}
-function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}document.getElementById('timer').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);document.getElementById('timer-fill').style.width=Math.round(rem/total*100)+'%';},1000);}
-startTimer();
-
+function startTimer(){tInt=setInterval(function(){rem--;if(rem<=0){rem=0;clearInterval(tInt);}var t=document.getElementById('timer');if(t)t.textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);var f=document.getElementById('timer-fill');if(f)f.style.width=Math.round(rem/total*100)+'%';},1000);}
+function startTest(){
+  if(!testStarted){testStarted=true;startAt=Date.now();startTimer();}
+  goSec(1);
+}
 function goSec(n){
+  if(n>0&&!testStarted){testStarted=true;startAt=Date.now();startTimer();}
   document.getElementById('sec'+cur).classList.remove('active');
   document.getElementById('sec'+n).classList.add('active');
   var tabs=document.querySelectorAll('.pnav-item');
@@ -382,7 +387,6 @@ function goSec(n){
   tabs[n].classList.add('active');tabs[n].classList.remove('done');
   cur=n;window.scrollTo({top:0,behavior:'smooth'});
 }
-
 function countW(){
   var t=document.getElementById('presentation').value.trim();
   var n=t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;
@@ -390,6 +394,7 @@ function countW(){
   el.textContent=n+' mots · cible : 50–80';
   el.className='wc-bar'+(n>=50&&n<=80?' wc-ok':'');
 }
+function wordCount(t){t=String(t||'').trim();return t?t.split(/\s+/).filter(function(w){return w.length>0;}).length:0;}
 
 var qcmData=[
   {id:'q1',q:'_______ your name?',opts:["A — What's","B — How's","C — Where's","D — Who's"]},
@@ -399,26 +404,12 @@ var qcmData=[
   {id:'q5',q:'She _______ to school by bus every day.',opts:['A — go','B — goes','C — is going','D — went']},
   {id:'q6',q:'How _______ brothers do you have?',opts:['A — much','B — many','C — lot of','D — few']},
 ];
-var q2aDiv=document.getElementById('qcm2a');
-qcmData.forEach(function(q,i){
-  var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';q2aDiv.innerHTML+=h;
-});
-
 var vocabData=[
   {id:'v1',q:'1. How do you say "15" in English?',opts:['fifteen','fifty','fiveteen','fifthteen']},
   {id:'v2',q:'2. Which number is "40"?',opts:['fourteen','forty','four hundred','four']},
   {id:'v3',q:'3. How do you write "21st" in words?',opts:['twenty-first','twenty-one','twenty-oneth','twenty-first-th']},
   {id:'v4',q:'4. What is "100" in English?',opts:['one hundred','ten hundred','a thousand','one hundreds']},
 ];
-var v2cDiv=document.getElementById('vocab2c');
-vocabData.forEach(function(v){
-  var h='<div class="q-block"><div class="q-text">'+v.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
-  v.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+v.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';v2cDiv.innerHTML+=h;
-});
-
 var r1Data=[
   {id:'r1',q:"1. How old is Tom?",opts:['A — 18','B — 25','C — 30','D — Not mentioned']},
   {id:'r2',q:"2. What does Tom's father do?",opts:["A — He's a teacher","B — He's a student","C — He's a doctor","D — He's a vet"]},
@@ -426,206 +417,256 @@ var r1Data=[
   {id:'r4',q:"4. What does Lucy study?",opts:['A — Medicine and science','B — English and French','C — Maths and history','D — Art and music']},
   {id:'r5',q:'5. Who takes the dog for a walk in the morning?',opts:["A — Tom","B — Lucy","C — Tom's mother","D — Tom's father"]},
 ];
-var r1Div=document.getElementById('read1mcq');
-r1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';r1Div.innerHTML+=h;
-});
-
 var l1Data=[
   {id:'l1',q:"1. Where is the man from?",opts:['A — England','B — Canada','C — Australia','D — Ireland']},
   {id:'l2',q:"2. What is his job?",opts:['A — Teacher','B — Doctor','C — Engineer','D — Student']},
   {id:'l3',q:'3. What does he want to do?',opts:['A — Visit a museum','B — Find a restaurant','C — Book a hotel','D — Take a taxi']},
 ];
-var l1Div=document.getElementById('listen1mcq');
-l1Data.forEach(function(q){
-  var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
-  q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
-  h+='</div></div>';l1Div.innerHTML+=h;
-});
-
-document.querySelectorAll('.r-opt').forEach(function(lbl){
-  lbl.addEventListener('click',function(){
-    var name=lbl.querySelector('input').name;
-    document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
-    lbl.classList.add('selected');
-  });
-});
 
 function getRadio(name){var el=document.querySelector('input[name="'+name+'"]:checked');return el?el.value:'';}
 function getVal(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
+/* ══ CATON ENGINE v2 — correction post-soumission uniquement ══ */
+function normA(s){return String(s).trim().toLowerCase().replace(/\u2019/g,"'").replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
+
+/* answerKey unique — auto (blancs/radios), semi (reformulations en question), manuel (formateur) */
+var answerKey={
+  /* §0 MANUEL BASIQUE — 20 pts */
+  mma1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 1 · to be',a:['is']},
+  mma2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 2 · to be (négatif)',a:["aren't",'are not']},
+  mma3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 3 · to be (négatif)',a:["isn't",'is not']},
+  mma4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-A 4 · to be',a:['are']},
+  mmb1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 1 · 3e mois',a:['march']},
+  mmb2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 2 · après mercredi',a:['thursday']},
+  mmb3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 3 · après l\u2019été',a:['autumn','fall']},
+  mmb4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-B 4 · samedi',a:['saturday']},
+  mmc1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-C 1 · la main',a:['hand','a hand','the hand']},
+  mmc2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-C 2 · le genou',a:['knee','a knee','the knee']},
+  mmc3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-C 3 · l\u2019épaule',a:['shoulder','a shoulder','the shoulder']},
+  mmc4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-C 4 · la cheville',a:['ankle','an ankle','the ankle']},
+  mmd1:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-D 1 · adjectif possessif',a:['his']},
+  mmd2:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-D 2 · possessif',a:['her']},
+  mmd3:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-D 3 · possessif',a:['our']},
+  mmd4:{cat:'auto',blk:'manuel',pts:1,lbl:'MM-D 4 · pronom possessif',a:['hers']},
+  mme1:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 1 · question (to be)',forms:[{name:'Is she a doctor?',re:/^\s*is\s+she\b[\s\S]*\bdoctor\b/i}]},
+  mme2:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 2 · question (do)',forms:[{name:'Do they live in Paris?',re:/^\s*do\s+they\b[\s\S]*\blive\b/i}]},
+  mme3:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 3 · question (does)',forms:[{name:'Does he work on Saturdays?',re:/^\s*does\s+he\b[\s\S]*\bwork\b/i}]},
+  mme4:{cat:'semi',blk:'manuel',pts:1,lbl:'MM-E 4 · question (to be)',forms:[{name:'Are you from Guadeloupe?',re:/^\s*are\s+you\b[\s\S]*\bguadeloupe\b/i}]},
+  /* §2 LANGUE — 15 pts */
+  q1:{cat:'auto',blk:'langue',pts:1,lbl:'2A-1',a:["A — What's"],radio:true},
+  q2:{cat:'auto',blk:'langue',pts:1,lbl:'2A-2',a:['A — drink'],radio:true},
+  q3:{cat:'auto',blk:'langue',pts:1,lbl:'2A-3',a:['C — is'],radio:true},
+  q4:{cat:'auto',blk:'langue',pts:1,lbl:'2A-4',a:['B — Do'],radio:true},
+  q5:{cat:'auto',blk:'langue',pts:1,lbl:'2A-5',a:['B — goes'],radio:true},
+  q6:{cat:'auto',blk:'langue',pts:1,lbl:'2A-6',a:['B — many'],radio:true},
+  ob1:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 1',a:['weather']},
+  ob2:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 2',a:['sunny']},
+  ob3:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 3',a:['raining']},
+  ob4:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 4',a:['cold']},
+  ob5:{cat:'auto',blk:'langue',pts:1,lbl:'2B lacune 5',a:['wear']},
+  v1:{cat:'auto',blk:'langue',pts:1,lbl:'2C-1 · 15',a:['fifteen'],radio:true},
+  v2:{cat:'auto',blk:'langue',pts:1,lbl:'2C-2 · 40',a:['forty'],radio:true},
+  v3:{cat:'auto',blk:'langue',pts:1,lbl:'2C-3 · 21st',a:['twenty-first'],radio:true},
+  v4:{cat:'auto',blk:'langue',pts:1,lbl:'2C-4 · 100',a:['one hundred'],radio:true},
+  /* §3 LECTURE — 10 pts */
+  r1:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q1',a:['B — 25'],radio:true},
+  r2:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q2',a:["C — He's a doctor"],radio:true},
+  r3:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q3',a:['C — At a primary school'],radio:true},
+  r4:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q4',a:['B — English and French'],radio:true},
+  r5:{cat:'auto',blk:'lecture',pts:2,lbl:'Lecture Q5',a:["D — Tom's father"],radio:true}
+};
+var BLOCKS=[
+  {id:'manuel',name:'§0 Manuel Basique',max:20},
+  {id:'langue',name:'§2 Langue',max:15},
+  {id:'lecture',name:'§3 Lecture',max:10}
+];
+var AUTO_MAX=45; /* 20+15+10 — Rédaction (15), Écoute (10) et Oral (5) évalués par le formateur */
+
+/* Table bloc → sections réelles du manuel (référentiel validé vs Notion lors des audits de la série) */
+var RECO={
+  manuel:'Manuel Basique — conjugaison de <em>to be</em>, sections Calendrier (jours, mois, saisons) et Corps humain · Manuel Intermédiaire — Section 10 (Pronouns) pour les pronoms et possessifs',
+  langue:'Manuel Basique — sections Nombres et Météo, plus les structures de base (present simple, there is/are, questions en do/does)',
+  lecture:'les textes simples du Manuel Basique (présentations, famille, quotidien), en lecture guidée avec ton formateur'
+};
+
+function gradeItem(id,getV,getR){
+  var it=answerKey[id];
+  if(it.cat==='auto'){
+    var v=it.radio?getR(id):getV(id);
+    if(!v)return{got:0,mark:'✗',user:'(vide)',expl:'Attendu : '+it.a[0]};
+    var okk=it.a.some(function(x){return normA(x)===normA(v);});
+    return{got:okk?it.pts:0,mark:okk?'✓':'✗',user:v,expl:okk?'':'Attendu : '+it.a[0]};
+  }
+  var t=getV(id),n=it.forms.length,hit=0,miss=[];
+  it.forms.forEach(function(f){if(f.re.test(t)){hit++;}else{miss.push(f.name);}});
+  var got=Math.round(it.pts*hit/n*2)/2;
+  return{got:got,mark:hit===n?'✓':(hit>0?'~':'✗'),user:t||'(vide)',semi:true,
+    expl:hit+'/'+n+' forme(s) détectée(s)'+(miss.length?' — attendu : '+miss.join(' · '):'')+' — à valider par le formateur'};
+}
+function gradeAll(getV,getR){
+  var scores={},marks={};
+  BLOCKS.forEach(function(b){scores[b.id]={got:0,max:b.max,name:b.name};});
+  var sumMax=0;
+  Object.keys(answerKey).forEach(function(id){
+    var it=answerKey[id],g=gradeItem(id,getV,getR);
+    scores[it.blk].got+=g.got;sumMax+=it.pts;marks[id]=g;
+  });
+  if(Math.abs(sumMax-AUTO_MAX)>0.001)throw new Error('answerKey/AUTO_MAX mismatch: '+sumMax);
+  var pts=BLOCKS.reduce(function(a,b){return a+scores[b.id].got;},0);
+  BLOCKS.forEach(function(b){scores[b.id].got=Math.round(scores[b.id].got*2)/2;});
+  return{scores:scores,pts:Math.round(pts*2)/2,pct:Math.round(pts/AUTO_MAX*100),marks:marks};
+}
+
+/* buildFeedback v2 — définie 1 seule fois */
+function buildFeedback(scores,pct,name){
+  var h='',weak=[];
+  BLOCKS.forEach(function(b){var s=scores[b.id];if(s.got/s.max<0.6)weak.push(b.id);});
+  var weakNames=weak.map(function(w){return scores[w].name;}).join(', ');
+  if(pct>=85){
+    h+='<p>🌟 <strong>Félicitations '+name+' !</strong> Avec <strong>'+pct+'%</strong>, tu maîtrises solidement le programme A1→A2. <strong>Objectif A2 atteint</strong> (sous réserve de la partie Expression) — tu es prêt(e) pour la <strong>certification CLOE</strong>.</p>';
+  }else if(pct>=65){
+    h+='<p>👏 <strong>Bravo '+name+' !</strong> Avec <strong>'+pct+'%</strong>, l\u2019objectif A2 est atteint. Une consolidation est conseillée avant la certification CLOE'+(weak.length?', en particulier sur '+weakNames:'')+'.</p>';
+  }else if(pct>=40){
+    h+='<p>💪 <strong>'+name+'</strong>, ton score partiel de <strong>'+pct+'%</strong> est un vrai point d\u2019appui. Une révision ciblée est recommandée avant d\u2019envisager la certification'+(weak.length?', sur '+weakNames:'')+'.</p>';
+  }else{
+    h+='<p>🤝 <strong>'+name+'</strong>, ce test sert exactement à ça : repérer ce qu\u2019il reste à consolider ('+pct+'% en correction automatique). On planifie ensemble une <strong>session de révision avec ton formateur</strong> avant d\u2019envisager la certification.</p>';
+  }
+  h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">Détail par bloc :</div>';
+  BLOCKS.forEach(function(b){
+    var s=scores[b.id],p=Math.round(s.got/s.max*100),low=p<60;
+    h+='<div style="margin:4px 0">'+(low?'🔶':'🔹')+' '+s.name+' : <strong>'+s.got+'/'+s.max+'</strong> ('+p+'%)'+(low?' — bloc à renforcer':'')+'</div>';
+  });
+  if(weak.length){
+    h+='<div style="margin:14px 0 6px;font-weight:600;color:var(--navy)">📚 À revoir en priorité :</div>';
+    weak.forEach(function(w){h+='<div style="margin:4px 0">• <strong>'+scores[w].name+'</strong> → '+RECO[w]+'</div>';});
+  }
+  h+='<p style="margin-top:14px;font-size:13px;color:var(--muted)">ℹ️ Les parties <strong>Rédaction, Écoute et Expression orale</strong> seront évaluées par ton formateur et peuvent ajuster le résultat final.</p>';
+  return h;
+}
+
+function buildCorrection(marks){
+  var h='<details style="margin-top:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px"><summary style="cursor:pointer;font-weight:600;color:var(--navy)">📝 Voir la correction détaillée</summary><div style="margin-top:12px;font-size:13px;line-height:1.7">';
+  Object.keys(answerKey).forEach(function(id){
+    var g=marks[id],it=answerKey[id];
+    var col=g.mark==='✓'?'#1F9254':(g.mark==='✗'?'#C0392B':'#D08A00');
+    h+='<div style="padding:5px 0;border-bottom:1px dashed var(--border)"><span style="color:'+col+';font-weight:700">'+g.mark+'</span> <strong>'+it.lbl+'</strong> — ta réponse : «&nbsp;'+String(g.user).replace(/</g,'&lt;')+'&nbsp;»'+(g.expl?' · <em>'+g.expl+'</em>':'')+'</div>';
+  });
+  h+='<div style="padding:5px 0"><span style="color:#D08A00;font-weight:700">—</span> <strong>Rédaction (§1), Écoute (§4), Expression orale (§5)</strong> — correction formateur</div>';
+  h+='</div></details>';
+  return h;
+}
+
+function saveLocal(name,res){
+  try{
+    var blocks={};BLOCKS.forEach(function(b){blocks[b.id]=res.scores[b.id].got+'/'+res.scores[b.id].max;});
+    localStorage.setItem(LS_KEY,JSON.stringify({name:name,pct:res.pct,blocks:blocks,date:new Date().toISOString().slice(0,10)}));
+  }catch(e){}
+}
+
+function showResults(name,res,elapsedStr){
+  var main=document.querySelector('main');
+  var h='<div class="section" style="background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px">';
+  h+='<div class="hero-tag" style="color:var(--navy)">Résultats — Test de Fin de Parcours A1→A2</div>';
+  h+='<h2 style="font-family:\'Cormorant Garamond\',serif;font-size:30px;color:var(--navy);margin:6px 0 2px">'+name+'</h2>';
+  h+='<div style="font-size:13px;color:var(--muted)">Durée : '+elapsedStr+' · Score automatique : <strong>'+res.pts+'/'+AUTO_MAX+'</strong></div>';
+  h+='<div style="font-size:44px;font-weight:600;color:var(--gold);margin:10px 0">'+res.pct+'%</div>';
+  BLOCKS.forEach(function(b){
+    var s=res.scores[b.id],p=Math.round(s.got/s.max*100);
+    h+='<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>'+s.name+'</span><span><strong>'+s.got+'/'+s.max+'</strong></span></div><div style="height:6px;background:var(--off);border-radius:3px;margin-top:3px"><div style="height:100%;width:'+p+'%;background:'+(p<60?'#C0392B':'var(--gold)')+';border-radius:3px"></div></div></div>';
+  });
+  h+='<div id="finalMessage" style="margin-top:18px;background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;font-size:14px;line-height:1.7"></div>';
+  h+=buildCorrection(res.marks);
+  h+='<div id="sendStatus" style="margin-top:16px;font-size:13px;font-weight:600;color:var(--muted)">⏳ Envoi des résultats à ton formateur…</div>';
+  h+='</div>';
+  main.innerHTML=h;
+  document.getElementById('finalMessage').innerHTML=buildFeedback(res.scores,res.pct,name);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function submitTest(){
   var nom=getVal('id-nom');
   if(!nom){alert('Merci de saisir ton nom et prénom.');goSec(0);return;}
-  clearInterval(tInt);
-  var elapsed=total-rem;
-  var lines=[
-    '=== TEST DE FIN DE PARCOURS A1→A2 — CATON ACADEMY ===',
-    'Apprenant : '+nom,
-    'Formule : '+getVal('id-formule'),
-    'Date : '+getVal('id-date'),
-    'Durée : '+pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s',
-    '',
-    '--- SECTION 0 · MANUEL BASIQUE ---',
-    'MMA-1 (to be) : '+getVal('mma1'),
-    'MMA-2 (to be) : '+getVal('mma2'),
-    'MMA-3 (to be) : '+getVal('mma3'),
-    'MMA-4 (to be) : '+getVal('mma4'),
-    'MMB-1 (3e mois) : '+getVal('mmb1'),
-    'MMB-2 (après mercredi) : '+getVal('mmb2'),
-    'MMB-3 (après été) : '+getVal('mmb3'),
-    'MMB-4 (samedi) : '+getVal('mmb4'),
-    'MMC-1 (main) : '+getVal('mmc1'),
-    'MMC-2 (genou) : '+getVal('mmc2'),
-    'MMC-3 (épaule) : '+getVal('mmc3'),
-    'MMC-4 (cheville) : '+getVal('mmc4'),
-    'MMD-1 (pronom) : '+getVal('mmd1'),
-    'MMD-2 (possessif her) : '+getVal('mmd2'),
-    'MMD-3 (possessif our) : '+getVal('mmd3'),
-    'MMD-4 (hers) : '+getVal('mmd4'),
-    'MME-1 (question) : '+getVal('mme1'),
-    'MME-2 (question) : '+getVal('mme2'),
-    'MME-3 (question) : '+getVal('mme3'),
-    'MME-4 (question) : '+getVal('mme4'),
-    '',
-    '--- SECTION 1 · PRÉSENTATION (50-80 mots) ---',
-    getVal('presentation'),
-    '',
-    '--- SECTION 2 · LANGUE ---',
-    '2A-1 : '+getRadio('q1'),
-    '2A-2 : '+getRadio('q2'),
-    '2A-3 : '+getRadio('q3'),
-    '2A-4 : '+getRadio('q4'),
-    '2A-5 : '+getRadio('q5'),
-    '2A-6 : '+getRadio('q6'),
-    '2B-1 (weather) : '+getVal('ob1'),
-    '2B-2 (sunny) : '+getVal('ob2'),
-    '2B-3 (raining) : '+getVal('ob3'),
-    '2B-4 (cold) : '+getVal('ob4'),
-    '2B-5 (wear) : '+getVal('ob5'),
-    '2C-1 (15) : '+getRadio('v1'),
-    '2C-2 (40) : '+getRadio('v2'),
-    '2C-3 (21st) : '+getRadio('v3'),
-    '2C-4 (100) : '+getRadio('v4'),
-    '',
-    '--- SECTION 3 · LECTURE ---',
-    'Q1 : '+getRadio('r1'),
-    'Q2 : '+getRadio('r2'),
-    'Q3 : '+getRadio('r3'),
-    'Q4 : '+getRadio('r4'),
-    'Q5 : '+getRadio('r5'),
-    '',
-    '--- SECTION 4 · ÉCOUTE ---',
-    'A1 Q1 : '+getRadio('l1'),
-    'A1 Q2 : '+getRadio('l2'),
-    'A1 Q3 : '+getRadio('l3'),
-    'A2 L1 (nom) : '+getVal('l2g1'),
-    'A2 L2 (âge) : '+getVal('l2g2'),
-    'A2 L3 (ville) : '+getVal('l2g3'),
-    'A2 L4 (téléphone) : '+getVal('l2g4'),
-    'A2 L5 (nb personnes) : '+getVal('l2g5'),
-    '',
-    '--- SECTION 5 · ORAL ---',
-    'Lien enregistrement : '+getVal('audio-link'),
-    'Commentaire : '+getVal('comment'),
-  ];
-  var subj=lines.join('\n');
-  document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 class="submit-title">Envoi en cours…</h2></div>';
-  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})
-  }).then(function(r){if(r.ok){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">✓</div><h2 class="submit-title">Test soumis — Merci '+nom+' !</h2><p class="submit-sub">Tes réponses ont bien été envoyées à CATON Academy.</p></div>'}else{document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'}}).catch(function(){document.querySelector('main').innerHTML='<div class="submit-screen"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 class="submit-title">Erreur</h2><p class="submit-sub">Contacte Lenny@catonacademy.com.</p></div>'});
+  if(tInt)clearInterval(tInt);
+  var elapsed=startAt?Math.round((Date.now()-startAt)/1000):0;
+  var elapsedStr=pad(Math.floor(elapsed/60))+'m'+pad(elapsed%60)+'s';
+  var res=gradeAll(getVal,getRadio);
+  saveLocal(nom,res);
+
+  var lines=['=== EndTest ANG16F · A1→A2 — CATON ACADEMY ===',
+    'Apprenant : '+nom,'Formule : '+(getVal('id-formule')||'ANG16F'),'Date : '+getVal('id-date'),
+    'Durée effective : '+elapsedStr,
+    'Score automatique : '+res.pts+'/'+AUTO_MAX+' ('+res.pct+'%)'];
+  BLOCKS.forEach(function(b){var s=res.scores[b.id];lines.push('  '+s.name+' : '+s.got+'/'+s.max);});
+  lines.push('','--- DÉTAIL PAR ITEM (auto + semi-auto) ---');
+  Object.keys(answerKey).forEach(function(id){
+    var g=res.marks[id];
+    lines.push(g.mark+' '+answerKey[id].lbl+' : '+g.user+(g.expl?' ['+g.expl+']':''));
+  });
+  lines.push('','--- §1 PRÉSENTATION (correction formateur) — '+wordCount(getVal('presentation'))+' mots ---',getVal('presentation')||'(vide)');
+  lines.push('','--- §4 ÉCOUTE (correction formateur) ---',
+    'A1 Q1 : '+getRadio('l1'),'A1 Q2 : '+getRadio('l2'),'A1 Q3 : '+getRadio('l3'),
+    'A2 L1 (nom) : '+getVal('l2g1'),'A2 L2 (âge) : '+getVal('l2g2'),'A2 L3 (ville) : '+getVal('l2g3'),
+    'A2 L4 (téléphone) : '+getVal('l2g4'),'A2 L5 (nb personnes) : '+getVal('l2g5'));
+  lines.push('','--- §5 ORAL (correction formateur) ---','Lien enregistrement : '+getVal('audio-link'),'Commentaire : '+getVal('comment'));
+
+  var subj='[EndTest] ANG16F — '+nom+' — '+res.pct+'%';
+  showResults(nom,res,elapsedStr);
+  fetch('https://formspree.io/f/mlgadonn',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({subject:subj,message:lines.join('\n')})})
+  .then(function(r){var st=document.getElementById('sendStatus');if(!st)return;
+    if(r.ok){st.textContent='✓ Résultats transmis à ton formateur.';st.style.color='#1F9254';}
+    else{st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}})
+  .catch(function(){var st=document.getElementById('sendStatus');if(st){st.textContent='⚠ Résultats non transmis — contacte Lenny@catonacademy.com.';st.style.color='#C0392B';}});
 }
 
-/* == CATON ENGINE v7 == */
-(function(){
-var A={"mma1":"is","mma2":["aren\'t","are not"],"mma3":["isn\'t","is not"],"mma4":"are","mmb1":"march","mmb2":"thursday","mmb3":["autumn","fall"],"mmb4":"saturday","mmc1":"hand","mmc2":"knee","mmc3":"shoulder","mmc4":"ankle","mmd1":"his","mmd2":"her","mmd3":"our","mmd4":"hers","mme1":null,"mme2":null,"mme3":null,"mme4":null,"q1":"A — What\'s","q2":"A — drink","q3":"C — is","q4":"B — Do","q5":"B — goes","q6":"B — many","ob1":"weather","ob2":"sunny","ob3":"raining","ob4":"cold","ob5":"wear","v1":"fifteen","v2":"forty","v3":"twenty-first","v4":"one hundred","r1":"B — 25","r2":"C — He\'s a doctor","r3":"C — At a primary school","r4":"B — English and French","r5":"D — Tom\'s father","l1":null,"l2":null,"l3":null,"l2g1":null,"l2g2":null,"l2g3":null,"l2g4":null,"l2g5":null};
-var pts=0,tot=0,done=0;
-
-function norm(s){return String(s).trim().toLowerCase().replace(/[?!.,;:]/g,'').replace(/\s+/g,' ');}
-function ok(id,v){var a=A[id];if(!a&&a!==null)return false;if(a===null)return null;var n=norm(v);return Array.isArray(a)?a.some(function(x){return norm(x)===n;}):norm(a)===n;}
-function exp(id){var a=A[id];if(!a)return'?';return Array.isArray(a)?a[0]:a;}
-
-/* Score */
-function mkScore(){
-  var hi=document.querySelector('.header-inner');if(!hi)return;
-  var d=document.createElement('div');d.className='ca-score';d.id='ca-sc';
-  d.innerHTML='<div class="ca-sval" id="ca-sv">0</div><div class="ca-slbl">Score</div><div class="ca-sbar"><div class="ca-sfill" id="ca-sf" style="width:0%"></div></div>';
-  var tw=hi.querySelector('.timer-wrap');tw?hi.insertBefore(d,tw):hi.appendChild(d);
-}
-function upScore(){
-  var v=document.getElementById('ca-sv'),f=document.getElementById('ca-sf');
-  if(v)v.textContent=pts+(tot>0?'/'+tot:'');
-  if(f)f.style.width=(tot>0?Math.min(100,Math.round(pts/tot*100)):0)+'%';
-}
-
-/* Feedback */
-function rmFb(el){var n=el.nextSibling;while(n&&n.classList&&n.classList.contains('fb')){var t=n.nextSibling;n.parentNode.removeChild(n);n=t;}}
-function addFb(el,t,m){rmFb(el);var d=document.createElement('div');d.className='fb fb-'+t;d.innerHTML=m;el.parentNode.insertBefore(d,el.nextSibling);}
-
-/* MCQ */
-function bindRadios(){
-  document.querySelectorAll('.radio-list').forEach(function(list){
-    var i0=list.querySelector('input[type="radio"]');if(!i0)return;
-    var nm=i0.name;if(!A.hasOwnProperty(nm))return;
-    var ans=A[nm];if(ans!==null){tot++;upScore();}
-    list.querySelectorAll('input[type="radio"]').forEach(function(inp){
-      inp.addEventListener('change',function(){
-        if(list.dataset.done)return;list.dataset.done='1';
-        var ch=list.querySelector('input:checked');if(!ch)return;
-        var right=ok(nm,ch.value);
-        list.querySelectorAll('.r-opt').forEach(function(opt){
-          opt.classList.add('ca-lock');
-          var oi=opt.querySelector('input');if(!oi)return;
-          var isC=Array.isArray(ans)?ans.some(function(a){return norm(a)===norm(oi.value);}):ans&&norm(oi.value)===norm(ans);
-          var badge=document.createElement('span');badge.style.cssText='margin-left:auto;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;';
-          if(isC){opt.classList.add('ca-ok');badge.style.background='#1F9254';badge.style.color='#fff';badge.textContent='✓';opt.appendChild(badge);}
-          else if(oi.checked&&!right){opt.classList.add('ca-ko');badge.style.background='#C0392B';badge.style.color='#fff';badge.textContent='✕';opt.appendChild(badge);}
-        });
-        if(ans!==null){if(right===true){pts++;}done++;upScore();}
-      });
+/* ══ Init UI (navigateur uniquement) ══ */
+function initUI(){
+  var t=document.getElementById('timer');if(t)t.textContent='60:00';
+  var q2aDiv=document.getElementById('qcm2a');
+  qcmData.forEach(function(q,i){
+    var h='<div class="q-block"><div class="q-num">'+(i+1)+'</div><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';q2aDiv.innerHTML+=h;
+  });
+  var v2cDiv=document.getElementById('vocab2c');
+  vocabData.forEach(function(v){
+    var h='<div class="q-block"><div class="q-text">'+v.q+'</div><div class="radio-list" style="flex-direction:row;flex-wrap:wrap;gap:6px">';
+    v.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+v.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';v2cDiv.innerHTML+=h;
+  });
+  var r1Div=document.getElementById('read1mcq');
+  r1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';r1Div.innerHTML+=h;
+  });
+  var l1Div=document.getElementById('listen1mcq');
+  l1Data.forEach(function(q){
+    var h='<div class="q-block"><div class="q-text">'+q.q+'</div><div class="radio-list">';
+    q.opts.forEach(function(o){h+='<label class="r-opt"><input type="radio" name="'+q.id+'" value="'+o+'"> '+o+'</label>';});
+    h+='</div></div>';l1Div.innerHTML+=h;
+  });
+  document.querySelectorAll('.r-opt').forEach(function(lbl){
+    lbl.addEventListener('click',function(){
+      var name=lbl.querySelector('input').name;
+      document.querySelectorAll('input[name="'+name+'"]').forEach(function(i){i.closest('.r-opt').classList.remove('selected');});
+      lbl.classList.add('selected');
     });
   });
+  /* Bandeau repassage + pré-remplissage (traçabilité Qualiopi) */
+  try{
+    var prev=JSON.parse(localStorage.getItem(LS_KEY)||'null');
+    if(prev){
+      var main=document.querySelector('main');
+      var b=document.createElement('div');b.id='revisionBanner';
+      b.style.cssText='background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:20px;font-size:13.5px;color:var(--navy)';
+      b.innerHTML='📋 <strong>Test déjà passé le '+prev.date+'</strong> — score partiel '+prev.pct+'% (hors expression). Cette nouvelle tentative sera également transmise à ton formateur.';
+      main.insertBefore(b,main.firstChild);
+      var ni=document.getElementById('id-nom');if(ni&&prev.name)ni.value=prev.name;
+    }
+  }catch(e){}
 }
-
-/* Inputs */
-function chkInp(inp){
-  var id=inp.id;
-  if(!id||id==='id-nom'||id==='id-date'||!A.hasOwnProperty(id))return;
-  if(inp.dataset.done)return;
-  var v=inp.value.trim();if(!v)return;
-  inp.dataset.done='1';
-  var ans=A[id];
-  if(ans===null){inp.classList.add('inp-pend');addFb(inp,'pend','🟠 À corriger par le formateur');return;}
-  done++;var r=ok(id,v);
-  inp.classList.remove('inp-ok','inp-ko');
-  if(r){inp.classList.add('inp-ok');addFb(inp,'ok','✅ Correct !');pts++;}
-  else{inp.classList.add('inp-ko');addFb(inp,'ko','❌ Attendu : <strong>'+exp(id)+'</strong>');}
-  upScore();
-}
-function bindInputs(){
-  document.querySelectorAll('input.n-input,input.inline-fill').forEach(function(inp){
-    if(!inp.id||inp.id==='id-nom'||inp.id==='id-date'||!A.hasOwnProperty(inp.id))return;
-    if(A[inp.id]!==null){tot++;}
-    inp.addEventListener('blur',function(){chkInp(inp);});
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur();}});
-  });
-  upScore();
-}
-
-/* Textareas */
-function bindTa(){
-  document.querySelectorAll('textarea.n-ta').forEach(function(ta){
-    ta.addEventListener('blur',function(){
-      if(!ta.value.trim()||ta.dataset.done)return;ta.dataset.done='1';
-      ta.style.borderColor='#D08A00';ta.style.background='#FFF8E1';
-      addFb(ta,'pend','🟠 Production libre — À corriger par le formateur');
-    });
-  });
-}
-
-mkScore();bindRadios();bindInputs();bindTa();
-})();
+if(typeof document!=='undefined'){initUI();}
+if(typeof module!=='undefined'&&module.exports){module.exports={answerKey:answerKey,gradeAll:gradeAll,buildFeedback:buildFeedback,BLOCKS:BLOCKS,AUTO_MAX:AUTO_MAX};}
 
 </script>
 </body>
